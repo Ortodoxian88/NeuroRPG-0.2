@@ -5,6 +5,7 @@ import { Room, Player, Message } from '../types';
 import { Send, Users, Play, Loader2, Backpack, MessageSquare, Sparkles, Mic, Dices, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import Markdown from 'react-markdown';
 
 interface RoomViewProps {
   roomId: string;
@@ -556,12 +557,12 @@ export default function RoomView({ roomId, onLeave, onOpenBestiary }: RoomViewPr
                   )}>
                     <div className="text-xs font-semibold uppercase tracking-wider mb-2 flex items-center gap-2 text-neutral-500">
                       {msg.role === 'system' ? 'Гейм-мастер (Система)' : 
-                       msg.role === 'ai' ? 'Гейм-мастер' : 'Действия игроков'}
+                       msg.role === 'ai' ? 'Гейм-мастер (gemini-3.1-pro-preview)' : 'Действия игроков'}
                       <span className="text-neutral-700">•</span>
                       <span>Ход {msg.turn}</span>
                     </div>
-                    <div className="whitespace-pre-wrap leading-relaxed">
-                      {msg.content}
+                    <div className="markdown-body text-sm leading-relaxed">
+                      <Markdown>{msg.content}</Markdown>
                     </div>
                   </div>
                 ))}
