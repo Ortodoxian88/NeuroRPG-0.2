@@ -34,9 +34,11 @@ export interface Player {
 
 export interface Message {
   id: string;
-  role: 'system' | 'ai' | 'players';
+  role: 'system' | 'ai' | 'players' | 'player';
   content: string;
-  playerActions?: { uid: string; name: string; action: string; isHidden: boolean }[];
+  playerName?: string;
+  playerUid?: string;
+  isHidden?: boolean;
   turn: number;
   createdAt: Timestamp;
 }
