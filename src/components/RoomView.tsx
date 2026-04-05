@@ -43,6 +43,7 @@ export default function RoomView({ roomId, onLeave, onOpenBestiary }: RoomViewPr
   const [showDiceRoll, setShowDiceRoll] = useState<{ player: string, value: number } | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const generatingTurnRef = useRef<number | null>(null);
   
   const currentUser = auth.currentUser;
   const isHost = currentUser && room?.hostId === currentUser.uid;
@@ -96,6 +97,8 @@ export default function RoomView({ roomId, onLeave, onOpenBestiary }: RoomViewPr
   useEffect(() => {
     if (!isHost || !room || room.status !== 'playing' || isGenerating) return;
     if (players.length > 0 && players.every(p => p.isReady)) {
+      if (generatingTurnRef.current === room.turn) return;
+      generatingTurnRef.current = room.turn;
       generateAIResponse();
     }
   }, [players, isHost, room, isGenerating]);
@@ -219,6 +222,8 @@ export default function RoomView({ roomId, onLeave, onOpenBestiary }: RoomViewPr
         action: '',
         isReady: false
       });
+      setActionInput(me.action); // Restore text so they don't lose it
+      generatingTurnRef.current = null; // Reset turn ref so host can retry
     } catch (error) {
       console.error("Error canceling action", error);
     }
@@ -347,6 +352,7 @@ export default function RoomView({ roomId, onLeave, onOpenBestiary }: RoomViewPr
 
     } catch (error) {
       console.error("Error generating AI response", error);
+      generatingTurnRef.current = null; // Reset so it can retry if needed
     } finally {
       setIsGenerating(false);
     }
