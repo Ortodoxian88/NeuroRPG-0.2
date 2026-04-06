@@ -49,6 +49,8 @@ export default function Lobby({ onOpenBestiary }: LobbyProps) {
           alert("Комната с таким кодом не найдена.");
           return;
         }
+        // First reset, then set to ensure a fresh state if already in a room
+        await setDoc(doc(db, 'users', auth.currentUser.uid), { currentRoomId: null }, { merge: true });
         await setDoc(doc(db, 'users', auth.currentUser.uid), { currentRoomId: roomId }, { merge: true });
       } catch (error) {
         console.error("Error joining room", error);

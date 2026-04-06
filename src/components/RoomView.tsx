@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { doc, onSnapshot, collection, query, orderBy, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, onSnapshot, collection, query, orderBy, setDoc, serverTimestamp, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { Room, Player, Message } from '../types';
 import { Send, Users, Play, Loader2, Backpack, MessageSquare, Sparkles, Mic, Dices, X, Download, UserMinus } from 'lucide-react';
@@ -589,7 +589,7 @@ export default function RoomView({ roomId, onLeave, onOpenBestiary }: RoomViewPr
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto flex flex-col">
+      <div className="flex-1 overflow-y-auto min-h-0 flex flex-col">
         {activeTab === 'inventory' && (
           <div className="p-4 space-y-4">
             <h2 className="text-xl font-bold text-white flex items-center gap-2 mb-6 font-display">
@@ -703,7 +703,7 @@ export default function RoomView({ roomId, onLeave, onOpenBestiary }: RoomViewPr
         )}
 
         {activeTab === 'chat' && (
-          <div className="p-4 space-y-6 flex-1">
+          <div className="p-4 space-y-6">
             {room.status === 'lobby' ? (
               <div className="flex flex-col items-center justify-center py-12 text-center space-y-6">
                 <div className="w-16 h-16 bg-neutral-900 rounded-full flex items-center justify-center border border-neutral-800">

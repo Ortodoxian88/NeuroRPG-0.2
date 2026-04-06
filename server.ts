@@ -4,6 +4,7 @@ import { GoogleGenAI, Type, ThinkingLevel } from '@google/genai';
 import path from "path";
 import admin from 'firebase-admin';
 import fs from 'fs';
+import 'dotenv/config';
 
 // Initialize Firebase Admin for token verification
 const firebaseConfigPath = path.join(process.cwd(), 'firebase-applet-config.json');
@@ -34,21 +35,17 @@ const requireAuth = async (req: express.Request, res: express.Response, next: ex
   }
 };
 
-let aiClient: GoogleGenAI | null = null;
-
 function getAIClient(): GoogleGenAI {
-  if (!aiClient) {
-    const key = process.env.GEMINI_API_KEY;
-    if (!key) {
-      throw new Error("GEMINI_API_KEY environment variable is missing. Please set it in your Render dashboard.");
-    }
-    aiClient = new GoogleGenAI({ apiKey: key });
+  const key = process.env.GEMINI_API_KEY || process.env.API_KEY;
+  if (!key) {
+    throw new Error("GEMINI_API_KEY environment variable is missing. Please check your secrets in AI Studio.");
   }
-  return aiClient;
+  return new GoogleGenAI({ apiKey: key });
 }
 
 async function generateWithFallback(prompt: string, baseConfig: any, models: string[] = ["gemini-3-flash-preview", "gemini-3.1-flash-lite-preview"]) {
   let lastError;
+  const ai = getAIClient();
 
   for (const model of models) {
     try {
@@ -60,7 +57,7 @@ async function generateWithFallback(prompt: string, baseConfig: any, models: str
         delete config.thinkingConfig;
       }
 
-      const response = await getAIClient().models.generateContent({
+      const response = await ai.models.generateContent({
         model: model,
         contents: prompt,
         config: config
