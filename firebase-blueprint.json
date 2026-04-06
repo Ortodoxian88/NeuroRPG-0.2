@@ -30,6 +30,12 @@
             "timestamp": { "type": "number" }
           }
         },
+        "isGenerating": { "type": "boolean" },
+        "storySummary": { "type": "string" },
+        "lastSummaryTurn": { "type": "number" },
+        "worldState": { "type": "string" },
+        "factions": { "type": "object" },
+        "hiddenTimers": { "type": "object" },
         "createdAt": { "type": "timestamp" }
       },
       "required": ["hostId", "scenario", "turn", "status", "createdAt"]
@@ -48,6 +54,12 @@
         "maxHp": { "type": "number" },
         "mana": { "type": "number" },
         "maxMana": { "type": "number" },
+        "stress": { "type": "number" },
+        "alignment": { "type": "string" },
+        "injuries": { "type": "array", "items": { "type": "string" } },
+        "statuses": { "type": "array", "items": { "type": "string" } },
+        "mutations": { "type": "array", "items": { "type": "string" } },
+        "reputation": { "type": "object" },
         "action": { "type": "string" },
         "isHiddenAction": { "type": "boolean" },
         "isReady": { "type": "boolean" },
@@ -60,9 +72,12 @@
       "description": "A message in the game log",
       "type": "object",
       "properties": {
-        "role": { "type": "string", "enum": ["system", "ai", "players"] },
+        "role": { "type": "string", "enum": ["system", "ai", "players", "player"] },
         "content": { "type": "string" },
-        "playerActions": { "type": "array" },
+        "reasoning": { "type": "string" },
+        "playerName": { "type": "string" },
+        "playerUid": { "type": "string" },
+        "isHidden": { "type": "boolean" },
         "turn": { "type": "number" },
         "createdAt": { "type": "timestamp" }
       },
@@ -75,9 +90,12 @@
       "properties": {
         "title": { "type": "string" },
         "content": { "type": "string" },
-        "discoveredAt": { "type": "timestamp" }
+        "roomId": { "type": "string" },
+        "discoveredBy": { "type": "string" },
+        "discoveredAt": { "type": "timestamp" },
+        "createdAt": { "type": "timestamp" }
       },
-      "required": ["title", "content", "discoveredAt"]
+      "required": ["title", "content", "discoveredBy", "discoveredAt"]
     }
   },
   "firestore": {

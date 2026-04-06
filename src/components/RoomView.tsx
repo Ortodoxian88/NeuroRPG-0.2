@@ -385,7 +385,7 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary }
       }
 
       const data = await response.json();
-      const aiText = data.story;
+      const aiText = data.story || "Гейм-мастер обдумывает следующий шаг...";
       const reasoning = data.reasoning;
       const stateUpdates = data.stateUpdates;
       const bestiaryEntries = data.bestiary;
@@ -420,7 +420,7 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary }
               injuries: Array.isArray(update.injuries) ? update.injuries : playerSnap.data().injuries,
               statuses: Array.isArray(update.statuses) ? update.statuses : playerSnap.data().statuses,
               mutations: Array.isArray(update.mutations) ? update.mutations : playerSnap.data().mutations,
-              reputation: typeof update.reputation === 'object' ? update.reputation : playerSnap.data().reputation,
+              reputation: (typeof update.reputation === 'object' && update.reputation !== null) ? update.reputation : playerSnap.data().reputation,
             });
           }
         }
@@ -434,6 +434,8 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary }
             title: entry.title,
             content: entry.content,
             roomId: roomId,
+            discoveredBy: currentUser?.uid || 'unknown',
+            discoveredAt: serverTimestamp(),
             createdAt: serverTimestamp()
           });
         }

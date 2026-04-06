@@ -63,7 +63,7 @@ export default function ChatArea({
         if (msg.role === 'player') {
           const isMine = msg.playerUid === currentUser?.uid;
           
-          if (msg.isHidden && !isMine) {
+          if (msg.isHidden && !isMine && !isHost) {
             return (
               <div key={msg.id} className="rounded-xl p-3 text-sm bg-neutral-900/30 border border-neutral-800/30 text-neutral-500 italic flex items-center gap-2">
                 <span>🔒</span>
