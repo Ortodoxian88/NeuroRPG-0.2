@@ -26,17 +26,22 @@ export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     console.log("signInWithPopup success:", result.user.email);
+    return { success: true };
   } catch (error: any) {
     console.error("Error signing in with Google:", error.code, error.message);
+    let errorMessage = "Произошла ошибка при входе: " + error.message;
+    
     if (error.code === 'auth/popup-blocked') {
-      alert("Пожалуйста, разрешите всплывающие окна для этого сайта, чтобы войти через Google.");
+      errorMessage = "Пожалуйста, разрешите всплывающие окна для этого сайта, чтобы войти через Google.";
+    } else if (error.code === 'auth/popup-closed-by-user') {
+      errorMessage = "Окно авторизации было закрыто до завершения входа. Попробуйте еще раз.";
     } else if (error.code === 'auth/unauthorized-domain') {
-      alert("Этот домен не авторизован в настройках Firebase. Пожалуйста, добавьте его в список разрешенных доменов в консоли Firebase.");
-    } else if (error.message?.includes('missing initial state') || error.message?.includes('sessionStorage')) {
-      alert("Ошибка авторизации. Пожалуйста, откройте игру в стандартном браузере (Chrome, Safari), а не внутри мессенджера (Telegram, VK и т.д.).");
-    } else {
-      alert("Произошла ошибка при входе: " + error.message);
+      errorMessage = "Этот домен не авторизован в настройках Firebase. Пожалуйста, добавьте его в список разрешенных доменов в консоли Firebase.";
+    } else if (error.code === 'auth/web-storage-unsupported' || error.message?.includes('missing initial state') || error.message?.includes('sessionStorage')) {
+      errorMessage = "Ошибка авторизации. Ваш браузер блокирует сторонние cookie (Third-party cookies). Пожалуйста, отключите блокировку или откройте игру в стандартном браузере (Chrome, Safari), а не внутри мессенджера (Telegram, VK и т.д.).";
     }
+    
+    return { success: false, error: errorMessage };
   }
 };
 

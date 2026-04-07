@@ -31,6 +31,8 @@ export default function App() {
   const [reportMessage, setReportMessage] = useState('');
   const [isReporting, setIsReporting] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   // Settings State
   const [appSettings, setAppSettings] = useState<AppSettings>(() => {
@@ -241,15 +243,31 @@ export default function App() {
           </div>
           
           <div className="w-full space-y-4">
+            {authError && (
+              <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs p-3 rounded-xl text-left animate-in fade-in slide-in-from-bottom-2">
+                {authError}
+              </div>
+            )}
             <button
-              onClick={() => {
+              onClick={async () => {
                 console.log("Sign in button clicked");
-                signInWithGoogle();
+                setAuthError(null);
+                setIsSigningIn(true);
+                const result = await signInWithGoogle();
+                if (result && !result.success) {
+                  setAuthError(result.error || "Произошла неизвестная ошибка");
+                  setIsSigningIn(false);
+                }
               }}
-              className="w-full flex items-center justify-center gap-4 px-4 py-5 border border-transparent text-lg font-bold rounded-3xl text-black bg-white hover:bg-neutral-200 transition-all active:scale-95 shadow-2xl shadow-white/5"
+              disabled={isSigningIn}
+              className="w-full flex items-center justify-center gap-4 px-4 py-5 border border-transparent text-lg font-bold rounded-3xl text-black bg-white hover:bg-neutral-200 transition-all active:scale-95 shadow-2xl shadow-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6" alt="" />
-              Войти через Google
+              {isSigningIn ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : (
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6" alt="" />
+              )}
+              {isSigningIn ? 'Вход...' : 'Войти через Google'}
             </button>
             <p className="text-[10px] text-neutral-600 font-medium uppercase tracking-widest leading-relaxed">
               Авторизация необходима для сохранения <br /> твоего прогресса и персонажей
