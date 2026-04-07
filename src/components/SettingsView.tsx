@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AppSettings, ChatSettings } from '@/src/types';
-import { X, Globe, MessageSquare, Monitor, Type, Palette, Zap, ShieldAlert, Info } from 'lucide-react';
+import { X, Globe, MessageSquare, Monitor, Type, Palette, Zap, ShieldAlert, Info, Trash2 } from 'lucide-react';
+import { clearFirestoreCache } from '@/src/firebase';
 import { cn } from '@/src/lib/utils';
 
 interface SettingsViewProps {
@@ -113,6 +114,19 @@ export default function SettingsView({
                 <ToggleField label="Вибрация (Haptic)" value={appSettings.vibration} onChange={(v) => updateApp('vibration', v)} />
                 <ToggleField label="Анимации интерфейса" value={appSettings.animations} onChange={(v) => updateApp('animations', v)} />
                 <ToggleField label="Режим производительности" value={appSettings.performanceMode} onChange={(v) => updateApp('performanceMode', v)} />
+              </Section>
+
+              <Section title="Система" icon={<Bug size={18} />}>
+                <button 
+                  onClick={clearFirestoreCache}
+                  className="w-full flex items-center justify-between p-4 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-red-500/50 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <Trash2 size={20} className="text-neutral-500 group-hover:text-red-500" />
+                    <span className="text-base font-bold text-neutral-300 group-hover:text-white">Очистить кэш данных</span>
+                  </div>
+                  <span className="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Сброс</span>
+                </button>
               </Section>
 
               <div className="pt-12 pb-4 flex flex-col items-center justify-center text-neutral-600 space-y-2">
