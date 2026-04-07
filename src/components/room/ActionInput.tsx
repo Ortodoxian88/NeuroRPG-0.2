@@ -73,14 +73,14 @@ export default function ActionInput({
           )}
         </div>
       )}
-      <form onSubmit={onSubmit} className="flex gap-2">
+      <form onSubmit={onSubmit} className="flex gap-3">
         <div className="relative flex-1">
           <input
             type="text"
             value={actionInput}
             onChange={onInputChange}
             placeholder={`Что делает ${me?.name}? (введите / для команд)`}
-            className="w-full bg-black border border-neutral-700 rounded-full py-3 pl-4 pr-12 text-sm text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none"
+            className="w-full bg-black border border-neutral-700 rounded-full py-4 pl-5 pr-14 text-base text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none"
             disabled={isSubmittingAction || isGenerating}
           />
           <button
@@ -92,15 +92,15 @@ export default function ActionInput({
             )}
             disabled={isSubmittingAction || isGenerating}
           >
-            <Mic size={18} />
+            <Mic size={24} />
           </button>
         </div>
         <button
           type="submit"
           disabled={!actionInput.trim() || isSubmittingAction || isGenerating}
-          className="w-12 h-12 shrink-0 flex items-center justify-center bg-orange-600 hover:bg-orange-500 text-white rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-14 h-14 shrink-0 flex items-center justify-center bg-orange-600 hover:bg-orange-500 text-white rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Send size={18} />
+          <Send size={24} />
         </button>
       </form>
     </div>

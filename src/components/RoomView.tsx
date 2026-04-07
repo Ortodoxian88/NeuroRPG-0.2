@@ -377,7 +377,9 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
           currentQuests: room.quests || [],
           worldState: room.worldState,
           factions: room.factions,
-          hiddenTimers: room.hiddenTimers
+          hiddenTimers: room.hiddenTimers,
+          goreLevel: appSettings?.goreLevel || 'medium',
+          language: appSettings?.language || 'ru'
         })
       });
 
@@ -490,26 +492,26 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
             <p className="text-sm text-neutral-400 mt-1">Код комнаты: <span className="font-mono text-white">{roomId}</span></p>
           </div>
           
-          <form onSubmit={handleJoin} className="space-y-4">
+          <form onSubmit={handleJoin} className="space-y-5">
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-neutral-300">Имя персонажа</label>
+              <label className="block text-base font-medium text-neutral-300">Имя персонажа</label>
               <input
                 type="text"
                 value={characterName}
                 onChange={(e) => setCharacterName(e.target.value)}
-                className="w-full bg-black border border-neutral-800 rounded-lg p-3 text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none"
+                className="w-full bg-black border border-neutral-800 rounded-2xl p-4 text-base text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none"
                 placeholder="Например: Элара Шедоубоу"
                 required
               />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-neutral-300">Анкета персонажа</label>
-              <p className="text-xs text-neutral-500 mb-2">Опишите вашу расу, класс, предысторию и то, что у вас с собой. ИИ проанализирует это и создаст ваш стартовый инвентарь и навыки.</p>
+              <label className="block text-base font-medium text-neutral-300">Анкета персонажа</label>
+              <p className="text-sm text-neutral-500 mb-2">Опишите вашу расу, класс, предысторию и то, что у вас с собой. ИИ проанализирует это и создаст ваш стартовый инвентарь и навыки.</p>
               <textarea
                 value={characterProfile}
                 onChange={(e) => setCharacterProfile(e.target.value)}
                 rows={6}
-                className="w-full bg-black border border-neutral-800 rounded-lg p-3 text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none resize-none"
+                className="w-full bg-black border border-neutral-800 rounded-2xl p-4 text-base text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none resize-none"
                 placeholder="Например: Ловкий эльф-разбойник, выросший в трущобах. Я ношу с собой пару ржавых кинжалов, отмычки и загадочную серебряную монету."
                 required
               />
@@ -517,11 +519,11 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
             <button
               type="submit"
               disabled={isJoining || !characterName.trim() || !characterProfile.trim()}
-              className="w-full bg-orange-600 hover:bg-orange-500 text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-4 px-4 rounded-2xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-base"
             >
               {isJoining ? (
                 <>
-                  <Loader2 size={18} className="animate-spin" />
+                  <Loader2 size={20} className="animate-spin" />
                   ИИ анализирует персонажа...
                 </>
               ) : 'Присоединиться'}
@@ -565,39 +567,39 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
           <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
             {room.status === 'lobby' ? (
               <div className="flex-1 overflow-y-auto p-4">
-                <div className="flex flex-col items-center justify-center py-12 text-center space-y-6">
-                  <div className="w-16 h-16 bg-neutral-900 rounded-full flex items-center justify-center border border-neutral-800">
-                    <Users size={32} className="text-neutral-500" />
+                <div className="flex flex-col items-center justify-center py-12 text-center space-y-8">
+                  <div className="w-20 h-20 bg-neutral-900 rounded-full flex items-center justify-center border border-neutral-800">
+                    <Users size={40} className="text-neutral-500" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-white mb-2 font-display">Ожидание в лобби</h2>
-                    <p className="text-neutral-400 text-sm">
-                      Код комнаты: <span className="font-mono text-white bg-neutral-800 px-2 py-1 rounded mx-1">{roomId}</span>
+                    <h2 className="text-2xl font-bold text-white mb-3 font-display">Ожидание в лобби</h2>
+                    <p className="text-neutral-400 text-base">
+                      Код комнаты: <span className="font-mono text-white bg-neutral-800 px-3 py-1.5 rounded-lg mx-1">{roomId}</span>
                     </p>
                   </div>
                   
-                  <div className="w-full max-w-sm bg-neutral-900 border border-neutral-800 rounded-lg p-4 text-left">
-                    <h3 className="text-sm font-medium text-neutral-300 mb-3">В комнате ({players.length + (players.some(p => p.uid === room.hostId) ? 0 : 1)})</h3>
-                    <div className="space-y-2">
+                  <div className="w-full max-w-sm bg-neutral-900 border border-neutral-800 rounded-2xl p-6 text-left">
+                    <h3 className="text-base font-medium text-neutral-300 mb-4">В комнате ({players.length + (players.some(p => p.uid === room.hostId) ? 0 : 1)})</h3>
+                    <div className="space-y-4">
                       {!players.some(p => p.uid === room.hostId) && (
-                        <div className="flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-2 text-neutral-400">
-                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                        <div className="flex items-center justify-between text-base">
+                          <div className="flex items-center gap-3 text-neutral-400">
+                            <div className="w-2 h-2 rounded-full bg-blue-500" />
                             <span className="text-neutral-200">Гейм-мастер (Хост)</span>
                           </div>
                           {isHost && !hasJoined && (
                              <button 
                                onClick={() => setShowJoinForm(true)}
-                               className="text-[10px] bg-orange-600 hover:bg-orange-500 px-2 py-0.5 rounded text-white transition-colors"
+                               className="text-xs bg-orange-600 hover:bg-orange-500 px-3 py-1.5 rounded-lg text-white transition-colors"
                              >
-                               Присоединиться как игрок
+                               Присоединиться
                              </button>
                           )}
                         </div>
                       )}
                       {players.map(p => (
-                        <div key={p.uid} className="flex items-center gap-2 text-sm text-neutral-400">
-                          <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                        <div key={p.uid} className="flex items-center gap-3 text-base text-neutral-400">
+                          <div className="w-2 h-2 rounded-full bg-orange-500" />
                           <span className="text-neutral-200">{p.name} {p.uid === room.hostId ? '(Хост)' : ''}</span>
                         </div>
                       ))}
@@ -608,9 +610,9 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
                     <button
                       onClick={handleStartGame}
                       disabled={players.length === 0}
-                      className="w-full max-w-sm bg-orange-600 hover:bg-orange-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+                      className="w-full max-w-sm bg-orange-600 hover:bg-orange-500 text-white font-bold py-4 px-4 rounded-2xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50 text-lg"
                     >
-                      <Play size={18} />
+                      <Play size={24} />
                       Начать игру
                     </button>
                   )}
@@ -654,49 +656,49 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
       )}
 
       {/* Bottom Navigation */}
-      <div className="shrink-0 bg-neutral-900 border-t border-neutral-800 flex items-center justify-around p-2 pb-safe z-20">
+      <div className="shrink-0 bg-neutral-900 border-t border-neutral-800 flex items-center justify-around p-3 pb-safe z-20">
         <button
           onClick={() => setActiveTab('inventory')}
           className={cn(
-            "flex flex-col items-center justify-center p-2 w-20 rounded-lg transition-colors",
+            "flex flex-col items-center justify-center p-2 w-20 rounded-xl transition-colors",
             activeTab === 'inventory' ? "text-orange-500" : "text-neutral-500 hover:text-neutral-300"
           )}
         >
-          <Backpack size={20} className="mb-1" />
-          <span className="text-[10px] font-medium">Инвентарь</span>
+          <Backpack size={24} className="mb-1.5" />
+          <span className="text-xs font-medium">Инвентарь</span>
         </button>
         
         <button
           onClick={() => setActiveTab('chat')}
           className={cn(
-            "flex flex-col items-center justify-center p-2 w-16 rounded-lg transition-colors",
+            "flex flex-col items-center justify-center p-2 w-20 rounded-xl transition-colors",
             activeTab === 'chat' ? "text-orange-500" : "text-neutral-500 hover:text-neutral-300"
           )}
         >
-          <MessageSquare size={20} className="mb-1" />
-          <span className="text-[10px] font-medium">Чат</span>
+          <MessageSquare size={24} className="mb-1.5" />
+          <span className="text-xs font-medium">Чат</span>
         </button>
 
         <button
           onClick={() => setActiveTab('quests')}
           className={cn(
-            "flex flex-col items-center justify-center p-2 w-16 rounded-lg transition-colors",
+            "flex flex-col items-center justify-center p-2 w-20 rounded-xl transition-colors",
             activeTab === 'quests' ? "text-orange-500" : "text-neutral-500 hover:text-neutral-300"
           )}
         >
-          <Sparkles size={20} className="mb-1" />
-          <span className="text-[10px] font-medium">Квесты</span>
+          <Sparkles size={24} className="mb-1.5" />
+          <span className="text-xs font-medium">Квесты</span>
         </button>
         
         <button
           onClick={() => setActiveTab('state')}
           className={cn(
-            "flex flex-col items-center justify-center p-2 w-16 rounded-lg transition-colors",
+            "flex flex-col items-center justify-center p-2 w-20 rounded-xl transition-colors",
             activeTab === 'state' ? "text-orange-500" : "text-neutral-500 hover:text-neutral-300"
           )}
         >
-          <Users size={20} className="mb-1" />
-          <span className="text-[10px] font-medium">Мир</span>
+          <Users size={24} className="mb-1.5" />
+          <span className="text-xs font-medium">Мир</span>
         </button>
       </div>
     </div>

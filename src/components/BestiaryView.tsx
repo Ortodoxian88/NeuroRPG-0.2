@@ -33,13 +33,13 @@ export default function BestiaryView({ onBack }: { onBack: () => void }) {
       
       <div className="p-4 border-b border-neutral-900">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" size={20} />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Поиск по бестиарию..."
-            className="w-full bg-neutral-900 border border-neutral-800 rounded-lg py-2 pl-10 pr-4 text-sm text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none"
+            className="w-full bg-neutral-900 border border-neutral-800 rounded-2xl py-4 pl-12 pr-4 text-base text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none"
           />
         </div>
       </div>
@@ -51,9 +51,9 @@ export default function BestiaryView({ onBack }: { onBack: () => void }) {
           <p className="text-neutral-500 text-center py-8">Ничего не найдено.</p>
         ) : (
           filteredEntries.map(entry => (
-            <div key={entry.id} className="bg-neutral-900 border border-neutral-800 rounded-xl p-4">
-              <h2 className="text-lg font-bold text-orange-500 mb-2 font-display">{entry.title}</h2>
-              <div className="whitespace-pre-wrap text-sm text-neutral-300 leading-relaxed">{entry.content}</div>
+            <div key={entry.id} className="bg-neutral-900 border border-neutral-800 rounded-xl p-5">
+              <h2 className="text-xl font-bold text-orange-500 mb-2 font-display">{entry.title}</h2>
+              <div className="whitespace-pre-wrap text-base text-neutral-300 leading-relaxed">{entry.content}</div>
             </div>
           ))
         )}

@@ -141,8 +141,8 @@ export default function Lobby({ onOpenBestiary, onOpenSettings, onOpenReport }: 
         {/* Active Sessions Section */}
         {activeRooms.length > 0 && (
           <div className="w-full space-y-3">
-            <h2 className="text-sm font-bold text-neutral-400 flex items-center gap-2 uppercase tracking-widest">
-              <PlayCircle size={16} className="text-orange-500" />
+            <h2 className="text-base font-bold text-neutral-400 flex items-center gap-2 uppercase tracking-widest">
+              <PlayCircle size={20} className="text-orange-500" />
               Активные сессии
             </h2>
             <div className="grid gap-2">
@@ -152,17 +152,17 @@ export default function Lobby({ onOpenBestiary, onOpenSettings, onOpenReport }: 
                   onClick={() => handleSwitchRoom(room.id)}
                   className="w-full bg-neutral-900/50 border border-neutral-800 hover:border-orange-500/50 p-3 rounded-2xl text-left transition-all group"
                 >
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-mono text-[10px] text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded font-bold">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-mono text-xs text-orange-500 bg-orange-500/10 px-2 py-1 rounded font-bold">
                       {room.id}
                     </span>
                     {room.hostId === auth.currentUser?.uid && (
-                      <span className="text-[9px] bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded font-bold uppercase tracking-tighter">
+                      <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded font-bold uppercase tracking-tighter">
                         ГМ
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-neutral-400 line-clamp-1 italic">
+                  <p className="text-sm text-neutral-400 line-clamp-2 italic">
                     "{room.scenario}"
                   </p>
                 </button>
@@ -172,45 +172,45 @@ export default function Lobby({ onOpenBestiary, onOpenSettings, onOpenReport }: 
         )}
         
         <div className="grid grid-cols-1 gap-4">
-          <div className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-5 space-y-4">
-            <h2 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-widest">
-              <Plus size={18} className="text-orange-500" />
+          <div className="bg-neutral-900/50 border border-neutral-800 rounded-3xl p-6 space-y-5">
+            <h2 className="text-base font-bold text-white flex items-center gap-2 uppercase tracking-widest">
+              <Plus size={24} className="text-orange-500" />
               Новая игра
             </h2>
             <textarea
               value={scenario}
               onChange={(e) => setScenario(e.target.value)}
-              rows={3}
-              className="w-full bg-black border border-neutral-800 rounded-xl p-3 text-sm text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none resize-none"
+              rows={4}
+              className="w-full bg-black border border-neutral-800 rounded-2xl p-4 text-base text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none resize-none"
               placeholder="Опишите стартовую ситуацию..."
             />
             <button
               onClick={handleCreateRoom}
               disabled={isCreating || !scenario.trim()}
-              className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 px-4 rounded-xl transition-all active:scale-95 disabled:opacity-50 text-sm"
+              className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-4 px-4 rounded-2xl transition-all active:scale-95 disabled:opacity-50 text-base"
             >
               {isCreating ? 'Создание...' : 'Создать комнату'}
             </button>
           </div>
 
-          <div className="bg-neutral-900/50 border border-neutral-800 rounded-2xl p-5 space-y-4">
-            <h2 className="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-widest">
-              <LogIn size={18} className="text-orange-500" />
+          <div className="bg-neutral-900/50 border border-neutral-800 rounded-3xl p-6 space-y-5">
+            <h2 className="text-base font-bold text-white flex items-center gap-2 uppercase tracking-widest">
+              <LogIn size={24} className="text-orange-500" />
               Присоединиться
             </h2>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <input
                 type="text"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                className="flex-1 bg-black border border-neutral-800 rounded-xl p-3 text-sm text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none uppercase tracking-widest font-mono"
+                className="flex-1 min-w-0 bg-black border border-neutral-800 rounded-2xl p-4 text-base text-neutral-100 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 outline-none uppercase tracking-widest font-mono"
                 placeholder="КОД"
                 maxLength={6}
               />
               <button
                 onClick={handleJoinRoom}
                 disabled={!joinCode.trim()}
-                className="bg-neutral-800 hover:bg-neutral-700 text-white font-bold px-6 rounded-xl transition-all active:scale-95 disabled:opacity-50 text-sm"
+                className="bg-neutral-800 hover:bg-neutral-700 text-white font-bold px-6 rounded-2xl transition-all active:scale-95 disabled:opacity-50 text-base shrink-0"
               >
                 Войти
               </button>
@@ -220,35 +220,35 @@ export default function Lobby({ onOpenBestiary, onOpenSettings, onOpenReport }: 
 
         <button
           onClick={onOpenBestiary}
-          className="w-full bg-neutral-900/50 border border-neutral-800 hover:bg-neutral-800 text-white font-bold py-4 px-4 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-3 text-sm uppercase tracking-widest"
+          className="w-full bg-neutral-900/50 border border-neutral-800 hover:bg-neutral-800 text-white font-bold py-5 px-4 rounded-3xl transition-all active:scale-95 flex items-center justify-center gap-3 text-base uppercase tracking-widest"
         >
-          <BookOpen size={18} className="text-orange-500" />
+          <BookOpen size={24} className="text-orange-500" />
           Бестиарий
         </button>
       </div>
 
       {/* Footer Navigation */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-black/80 backdrop-blur-md border-t border-neutral-900 flex justify-around items-center z-20">
+      <div className="absolute bottom-0 left-0 right-0 p-4 pb-safe bg-black/90 backdrop-blur-md border-t border-neutral-900 flex justify-around items-center z-20">
         <button 
           onClick={onOpenReport}
-          className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
+          className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-white transition-colors p-2"
         >
-          <Bug size={20} />
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Баги</span>
+          <Bug size={24} />
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Баги</span>
         </button>
         <button 
           onClick={onOpenSettings}
-          className="flex flex-col items-center gap-1 text-neutral-500 hover:text-white transition-colors"
+          className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-white transition-colors p-2"
         >
-          <Settings size={20} />
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Опции</span>
+          <Settings size={24} />
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Опции</span>
         </button>
         <button 
           onClick={handleLogout}
-          className="flex flex-col items-center gap-1 text-neutral-500 hover:text-red-400 transition-colors"
+          className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-red-400 transition-colors p-2"
         >
-          <LogOut size={20} />
-          <span className="text-[9px] font-bold uppercase tracking-tighter">Выход</span>
+          <LogOut size={24} />
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Выход</span>
         </button>
       </div>
     </div>

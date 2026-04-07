@@ -49,20 +49,20 @@ export default function SettingsView({
         <button
           onClick={() => setActiveTab('global')}
           className={cn(
-            "px-6 py-3 text-sm font-bold uppercase tracking-wider rounded-t-xl transition-colors flex items-center gap-2",
+            "px-6 py-4 text-sm font-bold uppercase tracking-wider rounded-t-xl transition-colors flex items-center gap-2",
             activeTab === 'global' ? "bg-neutral-900 text-white" : "text-neutral-500 hover:text-neutral-300"
           )}
         >
-          <Globe size={16} /> Общие
+          <Globe size={18} /> Общие
         </button>
         <button
           onClick={() => setActiveTab('chat')}
           className={cn(
-            "px-6 py-3 text-sm font-bold uppercase tracking-wider rounded-t-xl transition-colors flex items-center gap-2",
+            "px-6 py-4 text-sm font-bold uppercase tracking-wider rounded-t-xl transition-colors flex items-center gap-2",
             activeTab === 'chat' ? "bg-neutral-900 text-white" : "text-neutral-500 hover:text-neutral-300"
           )}
         >
-          <MessageSquare size={16} /> Чат
+          <MessageSquare size={18} /> Чат
         </button>
       </div>
 
@@ -322,11 +322,11 @@ function Section({ title, icon, children }: { title: string, icon: React.ReactNo
 function SelectField({ label, value, onChange, options }: { label: string, value: string, onChange: (v: string) => void, options: {value: string, label: string}[] }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-neutral-950 border border-neutral-800 rounded-2xl">
-      <label className="text-sm font-bold text-neutral-300">{label}</label>
+      <label className="text-base font-bold text-neutral-300">{label}</label>
       <select 
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="bg-neutral-900 border border-neutral-700 text-white text-sm rounded-xl px-4 py-2 outline-none focus:border-orange-500 transition-colors cursor-pointer"
+        className="bg-neutral-900 border border-neutral-700 text-white text-base rounded-xl px-4 py-3 outline-none focus:border-orange-500 transition-colors cursor-pointer"
       >
         {options.map(opt => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -339,14 +339,14 @@ function SelectField({ label, value, onChange, options }: { label: string, value
 function ToggleField({ label, value, onChange }: { label: string, value: boolean, onChange: (v: boolean) => void }) {
   return (
     <label className="flex items-center justify-between p-4 bg-neutral-950 border border-neutral-800 rounded-2xl cursor-pointer hover:border-neutral-700 transition-colors group">
-      <span className="text-sm font-bold text-neutral-300 group-hover:text-white transition-colors">{label}</span>
+      <span className="text-base font-bold text-neutral-300 group-hover:text-white transition-colors">{label}</span>
       <div className={cn(
-        "w-12 h-6 rounded-full transition-colors relative",
+        "w-14 h-7 rounded-full transition-colors relative shrink-0",
         value ? "bg-orange-500" : "bg-neutral-800"
       )}>
         <div className={cn(
-          "absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform",
-          value ? "translate-x-6" : "translate-x-0"
+          "absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform",
+          value ? "translate-x-7" : "translate-x-0"
         )} />
       </div>
     </label>

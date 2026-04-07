@@ -210,9 +210,9 @@ export default function App() {
           
           <button
             onClick={signInWithGoogle}
-            className="w-full max-w-xs flex items-center justify-center gap-3 px-4 py-4 border border-transparent text-sm font-bold rounded-2xl text-black bg-white hover:bg-neutral-200 transition-all active:scale-95 shadow-xl"
+            className="w-full max-w-xs flex items-center justify-center gap-3 px-4 py-4 border border-transparent text-base font-bold rounded-2xl text-black bg-white hover:bg-neutral-200 transition-all active:scale-95 shadow-xl"
           >
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="" />
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6" alt="" />
             Войти через Google
           </button>
         </div>
@@ -222,15 +222,15 @@ export default function App() {
             onClick={() => setShowReportModal(true)}
             className="flex flex-col items-center justify-center p-4 bg-neutral-900/50 border border-neutral-800 rounded-2xl text-neutral-400 hover:text-white transition-colors group"
           >
-            <Bug size={20} className="mb-1 group-hover:text-orange-500 transition-colors" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">Баги</span>
+            <Bug size={24} className="mb-2 group-hover:text-orange-500 transition-colors" />
+            <span className="text-xs font-bold uppercase tracking-widest">Баги</span>
           </button>
           <button 
             onClick={() => setActiveView('settings')}
             className="flex flex-col items-center justify-center p-4 bg-neutral-900/50 border border-neutral-800 rounded-2xl text-neutral-400 hover:text-white transition-colors group"
           >
-            <Settings size={20} className="mb-1 group-hover:text-orange-500 transition-colors" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">Опции</span>
+            <Settings size={24} className="mb-2 group-hover:text-orange-500 transition-colors" />
+            <span className="text-xs font-bold uppercase tracking-widest">Опции</span>
           </button>
         </div>
 
@@ -327,10 +327,10 @@ export default function App() {
           Автономный режим
         </div>
       )}
-      <header className="shrink-0 border-b border-neutral-900 bg-black/80 backdrop-blur-md p-4 flex justify-between items-center z-30">
+      <header className="shrink-0 border-b border-neutral-900 bg-black/80 backdrop-blur-md p-5 flex justify-between items-center z-30">
         <div className="flex items-center gap-3">
           <h1 
-            className="text-lg font-bold text-white tracking-tight cursor-pointer flex items-center gap-2 font-display" 
+            className="text-2xl font-bold text-white tracking-tight cursor-pointer flex items-center gap-2 font-display" 
             onClick={() => { setActiveView('main'); setCurrentRoomId(currentRoomId); }}
           >
             NeuroRPG
@@ -338,21 +338,13 @@ export default function App() {
           {currentRoomId && activeView === 'main' && (
             <button 
               onClick={() => setActiveView('bestiary')} 
-              className="text-orange-500 hover:text-orange-400 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-orange-500/10 px-2 py-1 rounded-md transition-colors"
+              className="text-orange-500 hover:text-orange-400 flex items-center gap-1 text-sm font-bold uppercase tracking-wider bg-orange-500/10 px-3 py-1.5 rounded-lg transition-colors"
             >
-              <BookOpen size={12} /> Бестиарий
-            </button>
-          )}
-          {activeView !== 'main' && (
-            <button 
-              onClick={() => setActiveView('main')} 
-              className="text-neutral-400 hover:text-white flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-neutral-800 px-2 py-1 rounded-md transition-colors"
-            >
-              <ChevronLeft size={12} /> Назад
+              <BookOpen size={16} /> Бестиарий
             </button>
           )}
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           {currentRoomId && activeView === 'main' ? (
             <>
               <button
@@ -360,39 +352,39 @@ export default function App() {
                 className="p-2 text-neutral-400 hover:text-white transition-colors rounded-xl hover:bg-neutral-900"
                 title="Свернуть игру"
               >
-                <Home size={20} />
+                <Home size={24} />
               </button>
               <div className="relative">
                 <button
                   onClick={(e) => { e.stopPropagation(); setShowMoreMenu(!showMoreMenu); }}
                   className="p-2 text-neutral-400 hover:text-white transition-colors rounded-xl hover:bg-neutral-900"
                 >
-                  <MoreVertical size={20} />
+                  <MoreVertical size={24} />
                 </button>
                 
                 {showMoreMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl overflow-hidden z-50">
+                  <div className="absolute right-0 mt-2 w-56 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl overflow-hidden z-50">
                     <button 
                       onClick={() => { setActiveView('settings'); setShowMoreMenu(false); }}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-neutral-300 hover:bg-neutral-800 transition-colors"
+                      className="w-full flex items-center gap-3 px-5 py-4 text-base text-neutral-300 hover:bg-neutral-800 transition-colors"
                     >
-                      <Settings size={16} /> Настройки
+                      <Settings size={20} /> Настройки
                     </button>
                     <button 
                       onClick={() => { handleLeaveRoom(); setShowMoreMenu(false); }}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                      className="w-full flex items-center gap-3 px-5 py-4 text-base text-red-400 hover:bg-red-500/10 transition-colors"
                     >
-                      <DoorOpen size={16} /> Покинуть сессию
+                      <DoorOpen size={20} /> Покинуть сессию
                     </button>
                   </div>
                 )}
               </div>
             </>
           ) : (
-             <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest truncate max-w-[60px]">{user.displayName?.split(' ')[0]}</span>
-                <div className="w-8 h-8 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center overflow-hidden">
-                   {user.photoURL ? <img src={user.photoURL} alt="" /> : <span className="text-xs">{user.displayName?.[0]}</span>}
+             <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-neutral-500 uppercase tracking-widest truncate max-w-[80px]">{user.displayName?.split(' ')[0]}</span>
+                <div className="w-10 h-10 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center overflow-hidden">
+                   {user.photoURL ? <img src={user.photoURL} alt="" /> : <span className="text-base">{user.displayName?.[0]}</span>}
                 </div>
              </div>
           )}
@@ -462,7 +454,7 @@ export default function App() {
                       key={t}
                       onClick={() => setReportType(t)}
                       className={cn(
-                        "flex-1 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl border transition-all",
+                        "flex-1 py-3 text-xs font-bold uppercase tracking-widest rounded-xl border transition-all",
                         reportType === t ? "bg-orange-600 border-orange-500 text-white" : "bg-neutral-800 border-neutral-700 text-neutral-500"
                       )}
                     >
@@ -475,15 +467,15 @@ export default function App() {
                   value={reportMessage}
                   onChange={(e) => setReportMessage(e.target.value)}
                   placeholder="Опиши проблему или идею..."
-                  className="w-full h-32 bg-black border border-neutral-800 rounded-2xl p-4 text-sm text-white outline-none focus:border-orange-500 transition-colors resize-none"
+                  className="w-full h-32 bg-black border border-neutral-800 rounded-2xl p-4 text-base text-white outline-none focus:border-orange-500 transition-colors resize-none"
                 />
 
                 <button
                   onClick={handleSendReport}
                   disabled={isReporting || !reportMessage.trim()}
-                  className="w-full py-4 bg-white text-black font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-neutral-200 transition-all disabled:opacity-50"
+                  className="w-full py-4 bg-white text-black font-bold text-base rounded-2xl flex items-center justify-center gap-2 hover:bg-neutral-200 transition-all disabled:opacity-50"
                 >
-                  {isReporting ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                  {isReporting ? <Loader2 size={24} className="animate-spin" /> : <Send size={24} />}
                   Отправить отчет
                 </button>
               </>

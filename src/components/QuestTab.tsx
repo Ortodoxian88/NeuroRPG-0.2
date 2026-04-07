@@ -36,7 +36,7 @@ export default function QuestTab({ quests }: QuestTabProps) {
                   ) : (
                     <Circle className="text-orange-500 shrink-0 mt-0.5" size={20} />
                   )}
-                  <p className={`text-sm ${isCompleted ? 'text-neutral-500 line-through' : 'text-neutral-200'}`}>
+                  <p className={`text-base ${isCompleted ? 'text-neutral-500 line-through' : 'text-neutral-200'}`}>
                     {cleanQuest}
                   </p>
                 </div>

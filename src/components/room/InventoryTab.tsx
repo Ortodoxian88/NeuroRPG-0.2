@@ -18,10 +18,10 @@ export default function InventoryTab({ me, isSpectator }: InventoryTabProps) {
       ) : me?.inventory.length === 0 ? (
         <p className="text-neutral-500 text-center py-8">Ваши карманы пусты.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {me?.inventory.map((item, i) => (
-            <li key={i} className="bg-neutral-900 border border-neutral-800 p-3 rounded-lg text-neutral-200 flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-orange-500/50" />
+            <li key={i} className="bg-neutral-900 border border-neutral-800 p-4 rounded-xl text-neutral-200 flex items-center gap-3 text-base">
+              <div className="w-2 h-2 rounded-full bg-orange-500/50 shrink-0" />
               {item}
             </li>
           ))}

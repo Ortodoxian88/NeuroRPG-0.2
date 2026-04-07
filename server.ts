@@ -243,7 +243,7 @@ async function startServer() {
 
   app.post("/api/gemini/generate", requireAuth, async (req, res) => {
     try {
-      const { playersContext, recentMessages, turn, actionsText, currentQuests, worldState, factions, hiddenTimers, gmTone, aiModel, difficulty } = req.body;
+      const { playersContext, recentMessages, turn, actionsText, currentQuests, worldState, factions, hiddenTimers, gmTone, aiModel, difficulty, goreLevel, language } = req.body;
       
       const tonePrompt = gmTone === 'grimdark' ? 'Стиль: Мрачное, жестокое фэнтези. Смерть близка, ресурсы скудны, мир враждебен.' :
                          gmTone === 'horror' ? 'Стиль: Лавкрафтовский ужас. Напряжение, безумие, необъяснимые явления, постоянное чувство опасности.' :
@@ -254,15 +254,22 @@ async function startServer() {
                                difficulty === 'hard' ? 'Сложность: ВЫСОКАЯ. Игроки должны чувствовать вызов, ресурсы ограничены.' :
                                'Сложность: НОРМАЛЬНАЯ/ЛЕГКАЯ. Сфокусируйся на истории и фане.';
 
+      const gorePrompt = goreLevel === 'high' ? 'Уровень жестокости: ВЫСОКИЙ (R-rating). Описывай ранения, кровь и насилие максимально детально и красочно.' :
+                         goreLevel === 'low' ? 'Уровень жестокости: НИЗКИЙ (PG-13). Избегай детальных описаний крови и насилия, фокусируйся на действии.' :
+                         'Уровень жестокости: СРЕДНИЙ. Умеренные описания сражений без излишней детализации.';
+
+      const langPrompt = language === 'en' ? 'RESPOND STRICTLY IN ENGLISH.' : 'ОТВЕЧАЙ СТРОГО НА РУССКОМ ЯЗЫКЕ.';
+
       const modelName = aiModel === 'pro' ? 'gemini-3.1-pro-preview' : 'gemini-3-flash-preview';
 
       const prompt = `
 Ты элитный ИИ-Гейм-мастер для многопользовательской текстовой RPG. Твоя цель - реалистично симулировать мир, управлять NPC и реагировать на действия игроков.
-ОТВЕЧАЙ СТРОГО НА РУССКОМ ЯЗЫКЕ.
+${langPrompt}
 
 [НАСТРОЙКИ СЕССИИ]
 ${tonePrompt}
 ${difficultyPrompt}
+${gorePrompt}
 
 [КОНТЕКСТ МИРА]
 Текущее состояние мира и экономики: ${worldState || 'Начало игры. Экономика стабильна.'}
