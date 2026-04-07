@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { initializeFirestore, persistentLocalCache, persistentSingleTabManager } from 'firebase/firestore';
+import { initializeFirestore, persistentLocalCache, persistentSingleTabManager, clearIndexedDbPersistence } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
@@ -8,6 +8,16 @@ export const db = initializeFirestore(app, {
   localCache: persistentLocalCache({tabManager: persistentSingleTabManager({})}),
   experimentalForceLongPolling: true
 }, (firebaseConfig as any).firestoreDatabaseId);
+
+export const clearFirestoreCache = async () => {
+  try {
+    await clearIndexedDbPersistence(db);
+    window.location.reload();
+  } catch (error) {
+    console.error("Error clearing Firestore cache", error);
+  }
+};
+
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
