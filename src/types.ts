@@ -45,6 +45,8 @@ export interface Player {
 
 export interface AppSettings {
   goreLevel: 'low' | 'medium' | 'high';
+  gmTone?: 'classic' | 'grimdark' | 'horror' | 'epic';
+  difficulty?: 'normal' | 'hard' | 'hardcore';
   theme: 'light' | 'dark' | 'black';
   language: 'ru' | 'en';
   soundEffects: boolean;

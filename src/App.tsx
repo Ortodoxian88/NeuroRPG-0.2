@@ -39,6 +39,8 @@ export default function App() {
     const saved = localStorage.getItem('appSettings');
     return saved ? JSON.parse(saved) : {
       goreLevel: 'medium',
+      gmTone: 'classic',
+      difficulty: 'normal',
       theme: 'dark',
       language: 'ru',
       soundEffects: true,

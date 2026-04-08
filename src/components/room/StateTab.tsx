@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Download, UserMinus, Globe, Shield, Clock } from 'lucide-react';
+import { Sparkles, Download, UserMinus, Globe, Shield, Clock, Plus, Minus } from 'lucide-react';
 import { Player, Room, AppSettings } from '@/src/types';
 import { cn } from '@/src/lib/utils';
 
@@ -10,6 +10,7 @@ interface StateTabProps {
   isSpectator: boolean;
   onExportLog: () => void;
   onKickPlayer: (uid: string) => void;
+  onUpdatePlayer: (updates: Partial<Player>) => Promise<void>;
   turn: number;
   storySummary: string;
   room: Room;
@@ -23,12 +24,21 @@ export default function StateTab({
   isSpectator,
   onExportLog,
   onKickPlayer,
+  onUpdatePlayer,
   turn,
   storySummary,
   room,
   appSettings
 }: StateTabProps) {
   const isLight = appSettings?.theme === 'light';
+
+  const adjustStat = (stat: 'hp' | 'mana' | 'stress', delta: number) => {
+    if (!me) return;
+    const current = me[stat] || 0;
+    const max = stat === 'hp' ? me.maxHp : stat === 'mana' ? me.maxMana : 100;
+    const newValue = Math.max(0, Math.min(max, current + delta));
+    onUpdatePlayer({ [stat]: newValue });
+  };
 
   return (
     <div className={cn(
@@ -155,45 +165,57 @@ export default function StateTab({
       ) : (
         <>
           <div className={cn(
-            "border rounded-xl p-4 space-y-4",
+            "border rounded-xl p-4 space-y-6",
             isLight ? "bg-white border-neutral-200 shadow-sm" : "bg-neutral-900 border-neutral-800"
           )}>
-            <div className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span className="text-red-500 font-medium">Здоровье (HP)</span>
-                <span className={isLight ? "text-neutral-700" : "text-neutral-300"}>{me?.hp} / {me?.maxHp}</span>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm items-center">
+                <span className="text-red-500 font-bold uppercase tracking-wider text-xs">Здоровье (HP)</span>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => adjustStat('hp', -1)} className="p-1 hover:bg-red-500/10 rounded text-red-500 transition-colors"><Minus size={16} /></button>
+                  <span className={cn("font-mono font-bold text-base w-12 text-center", isLight ? "text-neutral-700" : "text-neutral-300")}>{me?.hp} / {me?.maxHp}</span>
+                  <button onClick={() => adjustStat('hp', 1)} className="p-1 hover:bg-red-500/10 rounded text-red-500 transition-colors"><Plus size={16} /></button>
+                </div>
               </div>
-              <div className={cn("h-2 rounded-full overflow-hidden", isLight ? "bg-neutral-100" : "bg-neutral-800")}>
-                <div className="h-full bg-red-500 transition-all" style={{ width: `${Math.max(0, Math.min(100, ((me?.hp || 0) / (me?.maxHp || 1)) * 100))}%` }} />
+              <div className={cn("h-2.5 rounded-full overflow-hidden", isLight ? "bg-neutral-100" : "bg-neutral-800")}>
+                <div className="h-full bg-red-500 transition-all duration-500" style={{ width: `${Math.max(0, Math.min(100, ((me?.hp || 0) / (me?.maxHp || 1)) * 100))}%` }} />
               </div>
             </div>
             
-            <div className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span className="text-blue-500 font-medium">Мана (MP)</span>
-                <span className={isLight ? "text-neutral-700" : "text-neutral-300"}>{me?.mana} / {me?.maxMana}</span>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm items-center">
+                <span className="text-blue-500 font-bold uppercase tracking-wider text-xs">Мана (MP)</span>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => adjustStat('mana', -1)} className="p-1 hover:bg-blue-500/10 rounded text-blue-500 transition-colors"><Minus size={16} /></button>
+                  <span className={cn("font-mono font-bold text-base w-12 text-center", isLight ? "text-neutral-700" : "text-neutral-300")}>{me?.mana} / {me?.maxMana}</span>
+                  <button onClick={() => adjustStat('mana', 1)} className="p-1 hover:bg-blue-500/10 rounded text-blue-500 transition-colors"><Plus size={16} /></button>
+                </div>
               </div>
-              <div className={cn("h-2 rounded-full overflow-hidden", isLight ? "bg-neutral-100" : "bg-neutral-800")}>
-                <div className="h-full bg-blue-500 transition-all" style={{ width: `${Math.max(0, Math.min(100, ((me?.mana || 0) / (me?.maxMana || 1)) * 100))}%` }} />
+              <div className={cn("h-2.5 rounded-full overflow-hidden", isLight ? "bg-neutral-100" : "bg-neutral-800")}>
+                <div className="h-full bg-blue-500 transition-all duration-500" style={{ width: `${Math.max(0, Math.min(100, ((me?.mana || 0) / (me?.maxMana || 1)) * 100))}%` }} />
               </div>
             </div>
 
-            <div className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span className="text-purple-500 font-medium">Стресс</span>
-                <span className={isLight ? "text-neutral-700" : "text-neutral-300"}>{me?.stress || 0} / 100</span>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm items-center">
+                <span className="text-purple-500 font-bold uppercase tracking-wider text-xs">Стресс</span>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => adjustStat('stress', -1)} className="p-1 hover:bg-purple-500/10 rounded text-purple-500 transition-colors"><Minus size={16} /></button>
+                  <span className={cn("font-mono font-bold text-base w-12 text-center", isLight ? "text-neutral-700" : "text-neutral-300")}>{me?.stress || 0} / 100</span>
+                  <button onClick={() => adjustStat('stress', 1)} className="p-1 hover:bg-purple-500/10 rounded text-purple-500 transition-colors"><Plus size={16} /></button>
+                </div>
               </div>
-              <div className={cn("h-2 rounded-full overflow-hidden", isLight ? "bg-neutral-100" : "bg-neutral-800")}>
-                <div className="h-full bg-purple-500 transition-all" style={{ width: `${Math.max(0, Math.min(100, me?.stress || 0))}%` }} />
+              <div className={cn("h-2.5 rounded-full overflow-hidden", isLight ? "bg-neutral-100" : "bg-neutral-800")}>
+                <div className="h-full bg-purple-500 transition-all duration-500" style={{ width: `${Math.max(0, Math.min(100, me?.stress || 0))}%` }} />
               </div>
             </div>
             
             <div className={cn(
-              "flex justify-between text-sm pt-2 border-t",
+              "flex justify-between text-sm pt-4 border-t",
               isLight ? "border-neutral-100" : "border-neutral-800/50"
             )}>
-              <span className="text-neutral-400">Мировоззрение:</span>
-              <span className="text-orange-500 font-medium">{me?.alignment || 'Нейтральное'}</span>
+              <span className="text-neutral-400 font-medium">Мировоззрение:</span>
+              <span className="text-orange-500 font-bold">{me?.alignment || 'Нейтральное'}</span>
             </div>
           </div>
 

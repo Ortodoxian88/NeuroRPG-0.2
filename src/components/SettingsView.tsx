@@ -98,6 +98,29 @@ export default function SettingsView({
               
               <Section title="Геймплей и Атмосфера" icon={<ShieldAlert size={18} />} appSettings={appSettings}>
                 <SelectField 
+                  label="Тон Гейм-мастера" 
+                  value={appSettings.gmTone || 'classic'} 
+                  onChange={(v) => updateApp('gmTone', v)}
+                  options={[
+                    { value: 'classic', label: 'Классическое фэнтези' },
+                    { value: 'grimdark', label: 'Гримдарк (Мрачное)' },
+                    { value: 'horror', label: 'Лавкрафтовский ужас' },
+                    { value: 'epic', label: 'Эпическая сага' }
+                  ]}
+                  appSettings={appSettings}
+                />
+                <SelectField 
+                  label="Сложность" 
+                  value={appSettings.difficulty || 'normal'} 
+                  onChange={(v) => updateApp('difficulty', v)}
+                  options={[
+                    { value: 'normal', label: 'Нормальная (Сбалансированная)' },
+                    { value: 'hard', label: 'Высокая (Сложная)' },
+                    { value: 'hardcore', label: 'Хардкор (Смертельная)' }
+                  ]}
+                  appSettings={appSettings}
+                />
+                <SelectField 
                   label="Уровень жестокости (Gore)" 
                   value={appSettings.goreLevel} 
                   onChange={(v) => updateApp('goreLevel', v)}

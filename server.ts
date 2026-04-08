@@ -50,13 +50,12 @@ const safetySettings = [
   { category: HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY, threshold: HarmBlockThreshold.BLOCK_NONE },
 ];
 
-function getAIClient(): any {
+function getAIClient(): GoogleGenAI {
   const key = process.env.GEMINI_API_KEY || process.env.API_KEY;
   if (!key) {
     throw new Error("GEMINI_API_KEY environment variable is missing. Please check your secrets in AI Studio.");
   }
-  // Use any to bypass constructor type issues and ensure it works at runtime
-  return new (GoogleGenAI as any)(key);
+  return new GoogleGenAI({ apiKey: key });
 }
 
 async function generateWithFallback(prompt: string, baseConfig: any, models: string[] = ["gemini-3-flash-preview", "gemini-3.1-flash-lite-preview"]) {
@@ -75,26 +74,22 @@ async function generateWithFallback(prompt: string, baseConfig: any, models: str
         delete config.thinkingConfig;
       }
 
-      const model = ai.getGenerativeModel({ 
+      const response = await ai.models.generateContent({
         model: modelName,
-        safetySettings: safetySettings
-      });
-
-      const result = await model.generateContent({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: config
+        contents: prompt,
+        config: {
+          ...config,
+          safetySettings: safetySettings
+        }
       });
       
-      const response = await result.response;
-      const text = response.text();
-      
-      if (!text) {
+      if (!response.text) {
         console.warn(`[AI] Model ${modelName} returned no text. Full response:`, JSON.stringify(response));
         throw new Error(`AI returned no text. Finish reason: ${response.candidates?.[0]?.finishReason}`);
       }
       
       console.log(`[AI] Successfully generated with ${modelName}`);
-      return text;
+      return response.text;
     } catch (error: any) {
       console.warn(`[AI] Model ${modelName} failed: ${error.message || error}`);
       lastError = error;
@@ -260,7 +255,7 @@ async function startServer() {
 
   app.post("/api/gemini/generate", requireAuth, async (req, res) => {
     try {
-      const { playersContext, recentMessages, turn, actionsText, currentQuests, worldState, factions, hiddenTimers, gmTone, aiModel, difficulty, goreLevel, language } = req.body;
+      const { playersContext, recentMessages, turn, actionsText, currentQuests, worldState, factions, hiddenTimers, gmTone, difficulty, goreLevel, language } = req.body;
       
       const tonePrompt = gmTone === 'grimdark' ? 'Стиль: Мрачное, жестокое фэнтези. Смерть близка, ресурсы скудны, мир враждебен.' :
                          gmTone === 'horror' ? 'Стиль: Лавкрафтовский ужас. Напряжение, безумие, необъяснимые явления, постоянное чувство опасности.' :
@@ -277,7 +272,7 @@ async function startServer() {
 
       const langPrompt = language === 'en' ? 'RESPOND STRICTLY IN ENGLISH.' : 'ОТВЕЧАЙ СТРОГО НА РУССКОМ ЯЗЫКЕ.';
 
-      const modelName = aiModel === 'pro' ? 'gemini-3.1-pro-preview' : 'gemini-3-flash-preview';
+      const modelName = 'gemini-3-flash-preview';
 
       const prompt = `
 Ты элитный ИИ-Гейм-мастер для многопользовательской текстовой RPG. Твоя цель - реалистично симулировать мир, управлять NPC и реагировать на действия игроков.
@@ -311,8 +306,8 @@ ${actionsText}
 3. Физика и Синергия: Магия взаимодействует с окружением (вода проводит ток, огонь сжигает дерево). Учитывай позиционирование и укрытия.
 4. Экономика и Инфляция: Цены меняются динамически. Обновляй это в "worldUpdates".
 5. Инвентарь: Учитывай логический вес. Нельзя нести 10 мечей.
-6. Состояния и Травмы: Накладывай эффекты (Кровотечение, Отравление) и перманентные травмы (Шрамы, Хромота) при сильном уроне. Обновляй HP/MP/Стресс.
-7. Психологический стресс и Мутации: В страшных ситуациях повышай стресс (0-100). При 100 - психоз. Накладывай скрытые мутации/проклятия.
+6. Состояния и Травмы: Накладывай эффекты (Кровотечение, Отравление) и перманентные травмы (Шрамы, Хромота) при сильном уроне. Обновляй HP/MP/Стресс в "stateUpdates".
+7. Психологический стресс и Мутации: В страшных ситуациях повышай стресс (0-100). При 100 - психоз. Накладывай скрытые мутации/проклятия. Обновляй это в "stateUpdates".
 8. Мировоззрение и Репутация: Сдвигай мировоззрение (alignment) и репутацию у фракций/NPC в зависимости от поступков.
 9. NPC: NPC могут лгать, обманывать (органично). Генерируй слухи в тавернах. Используй прямую речь от первого лица для важных NPC.
 10. Квесты и Таймеры: Ветвящиеся квесты. Обновляй скрытые таймеры (hiddenTimersUpdates). Если таймер истек - событие происходит.
@@ -355,7 +350,7 @@ ${actionsText}
                   mutations: { type: Type.ARRAY, items: { type: Type.STRING } },
                   reputation: { type: Type.OBJECT, description: "Репутация у фракций/NPC (Ключ: Имя, Значение: Число от -100 до 100)" }
                 },
-                required: ["uid", "hp", "mana", "stress", "inventory", "skills", "injuries", "statuses", "mutations"]
+                required: ["uid"]
               }
             },
             bestiary: {

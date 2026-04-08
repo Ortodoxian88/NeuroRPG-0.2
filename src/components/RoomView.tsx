@@ -388,6 +388,8 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
           worldState: room.worldState,
           factions: room.factions,
           hiddenTimers: room.hiddenTimers,
+          gmTone: appSettings?.gmTone || 'classic',
+          difficulty: appSettings?.difficulty || 'normal',
           goreLevel: appSettings?.goreLevel || 'medium',
           language: appSettings?.language || 'ru'
         })
@@ -576,6 +578,11 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
             isSpectator={isSpectator} 
             onExportLog={exportLog} 
             onKickPlayer={kickPlayer} 
+            onUpdatePlayer={async (updates) => {
+              if (currentUser) {
+                await updateDoc(doc(db, 'rooms', roomId, 'players', currentUser.uid), updates);
+              }
+            }}
             turn={room.turn}
             storySummary={room.storySummary || ''}
             room={room}
