@@ -5,6 +5,7 @@ import { Room, Player, Message, AppSettings, ChatSettings } from '@/src/types';
 import { Users, Play, Loader2, Backpack, MessageSquare, Sparkles, X, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
 import { typingIndicators } from '@/src/lib/indicators';
+import { processWikiCandidates } from '@/src/services/archivist';
 
 // Subcomponents
 import ChatArea from '@/src/components/room/ChatArea';
@@ -47,6 +48,7 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
   const [generationError, setGenerationError] = useState<string | null>(null);
   
   const [activeTab, setActiveTab] = useState<Tab>('chat');
+  const [archivistStatus, setArchivistStatus] = useState('');
   
   const [showCommands, setShowCommands] = useState(false);
   const [filteredCommands, setFilteredCommands] = useState(COMMANDS);
@@ -409,7 +411,7 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
 
       const reasoning = data.reasoning;
       const stateUpdates = data.stateUpdates;
-      const bestiaryEntries = data.bestiary;
+      const wikiCandidates = data.wikiCandidates;
       const updatedQuests = data.quests;
       const worldUpdates = data.worldUpdates;
       const factionUpdates = data.factionUpdates;
@@ -447,19 +449,10 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
         }
       }
 
-      // 3. Add to bestiary if AI provided entries
-      if (bestiaryEntries && Array.isArray(bestiaryEntries)) {
-        for (const entry of bestiaryEntries) {
-          const bestiaryRef = doc(collection(db, 'bestiary'));
-          await setDoc(bestiaryRef, {
-            title: entry.title,
-            content: entry.content,
-            roomId: roomId,
-            discoveredBy: currentUser?.uid || 'unknown',
-            discoveredAt: serverTimestamp(),
-            createdAt: serverTimestamp()
-          });
-        }
+      // 3. Process Wiki Candidates asynchronously
+      if (wikiCandidates && Array.isArray(wikiCandidates) && wikiCandidates.length > 0) {
+        // Don't await this, let it run in the background
+        processWikiCandidates(wikiCandidates, roomId, currentUser?.uid || 'unknown', setArchivistStatus);
       }
 
       // 4. Reset player readiness and update room
@@ -563,6 +556,13 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
     )}>
       
       <DiceOverlay showDiceRoll={showDiceRoll} />
+      
+      {archivistStatus && (
+        <div className="absolute top-4 right-4 z-50 bg-neutral-900/90 text-orange-400 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 shadow-lg border border-orange-500/30 animate-pulse">
+          <Sparkles size={16} />
+          {archivistStatus}
+        </div>
+      )}
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">

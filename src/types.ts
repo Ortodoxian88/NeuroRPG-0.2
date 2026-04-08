@@ -99,6 +99,19 @@ export interface Message {
 export interface BestiaryEntry {
   id?: string;
   title: string;
+  category: string;
+  tags: string[];
+  level: number; // 1, 2, 3 (knowledge level)
   content: string;
+  authorNotes?: string;
+  roomId: string;
+  discoveredBy: string;
   discoveredAt: any;
+  updatedAt?: any;
+}
+
+export interface WikiCandidate {
+  name: string;
+  rawFacts: string;
+  reason: string;
 }
