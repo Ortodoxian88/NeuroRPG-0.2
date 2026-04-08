@@ -37,6 +37,14 @@ export interface Player {
   statuses?: string[]; // Temporary effects (Poisoned, Bleeding, Buffed)
   mutations?: string[]; // Hidden or visible curses/mutations
   reputation?: Record<string, number>; // Faction/NPC standing (-100 to 100)
+  stats?: {
+    speed: number; // Скорость передвижения
+    reaction: number; // Скорость реакции
+    strength: number; // Сила на подъём
+    power: number; // Разрушительная сила
+    durability: number; // Прочность
+    stamina: number; // Выносливость
+  };
   action: string;
   isHiddenAction?: boolean;
   isReady: boolean;
@@ -53,6 +61,7 @@ export interface AppSettings {
   vibration: boolean;
   animations: boolean;
   performanceMode: boolean;
+  localMusicUrl?: string;
 }
 
 export interface ChatSettings {
@@ -100,6 +109,7 @@ export interface BestiaryEntry {
   id?: string;
   title: string;
   category: string;
+  nature?: 'positive' | 'negative' | 'neutral';
   tags: string[];
   level: number; // 1, 2, 3 (knowledge level)
   content: string;

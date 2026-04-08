@@ -39,8 +39,8 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
   const [players, setPlayers] = useState<Player[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   
-  const [characterName, setCharacterName] = useState('');
-  const [characterProfile, setCharacterProfile] = useState('');
+  const [characterName, setCharacterName] = useState(() => localStorage.getItem('lastCharacterName') || '');
+  const [characterProfile, setCharacterProfile] = useState(() => localStorage.getItem('lastCharacterProfile') || '');
   const [isJoining, setIsJoining] = useState(false);
   
   const [actionInput, setActionInput] = useState('');
@@ -244,10 +244,21 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
         statuses: [],
         mutations: [],
         reputation: {},
+        stats: {
+          speed: 10,
+          reaction: 10,
+          strength: 10,
+          power: 10,
+          durability: 10,
+          stamina: 10
+        },
         action: '',
         isReady: false,
         joinedAt: serverTimestamp()
       });
+      
+      localStorage.setItem('lastCharacterName', characterName.trim());
+      localStorage.setItem('lastCharacterProfile', characterProfile.trim());
     } catch (error) {
       console.error("Error joining room", error);
     } finally {
@@ -563,6 +574,19 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
           {archivistStatus}
         </div>
       )}
+
+      {/* Room Code Header */}
+      <div className={cn(
+        "px-4 py-2 flex justify-between items-center border-b text-xs",
+        appSettings?.theme === 'light' ? "bg-white border-neutral-200" : "bg-neutral-900/50 border-neutral-800"
+      )}>
+        <span className={cn("font-medium", appSettings?.theme === 'light' ? "text-neutral-500" : "text-neutral-400")}>
+          Код комнаты: <span className={cn("font-mono font-bold select-all", appSettings?.theme === 'light' ? "text-neutral-900" : "text-white")}>{roomId}</span>
+        </span>
+        {appSettings?.localMusicUrl && (
+          <audio src={appSettings.localMusicUrl} autoPlay loop controls className="h-6 w-48 opacity-50 hover:opacity-100 transition-opacity" />
+        )}
+      </div>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">

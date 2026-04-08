@@ -162,6 +162,27 @@ export default function SettingsView({
                 <ToggleField label="Вибрация (Haptic)" value={appSettings.vibration} onChange={(v) => updateApp('vibration', v)} appSettings={appSettings} />
                 <ToggleField label="Анимации интерфейса" value={appSettings.animations} onChange={(v) => updateApp('animations', v)} appSettings={appSettings} />
                 <ToggleField label="Режим производительности" value={appSettings.performanceMode} onChange={(v) => updateApp('performanceMode', v)} appSettings={appSettings} />
+                
+                <div className={cn(
+                  "flex flex-col gap-3 p-4 border rounded-2xl",
+                  appSettings.theme === 'light' ? "bg-white border-neutral-200 shadow-sm" : "bg-neutral-950 border-neutral-800"
+                )}>
+                  <label className={cn(
+                    "text-base font-bold",
+                    appSettings.theme === 'light' ? "text-neutral-700" : "text-neutral-300"
+                  )}>Локальная фоновая музыка (URL)</label>
+                  <p className="text-xs text-neutral-500">Вставьте прямую ссылку на аудиофайл (mp3, wav), чтобы он играл на фоне только для вас.</p>
+                  <input 
+                    type="text"
+                    value={appSettings.localMusicUrl || ''}
+                    onChange={(e) => updateApp('localMusicUrl', e.target.value)}
+                    placeholder="https://example.com/music.mp3"
+                    className={cn(
+                      "w-full border text-base rounded-xl px-4 py-3 outline-none focus:border-orange-500 transition-colors",
+                      appSettings.theme === 'light' ? "bg-neutral-50 border-neutral-200 text-neutral-900" : "bg-neutral-900 border-neutral-700 text-white"
+                    )}
+                  />
+                </div>
               </Section>
 
               <Section title="Система" icon={<Bug size={18} />} appSettings={appSettings}>

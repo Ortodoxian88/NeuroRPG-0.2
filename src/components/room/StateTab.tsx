@@ -220,6 +220,38 @@ export default function StateTab({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
+            {me?.stats && (
+              <div className="col-span-2">
+                <h3 className="text-sm font-medium text-neutral-400 mb-2 uppercase tracking-wider">Физические параметры</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className={cn("p-2 rounded border flex flex-col items-center justify-center", isLight ? "bg-white border-neutral-200" : "bg-neutral-900 border-neutral-800")}>
+                    <span className="text-[10px] text-neutral-500 uppercase">Скорость</span>
+                    <span className={cn("font-mono font-bold", isLight ? "text-neutral-800" : "text-neutral-200")}>{me.stats.speed}</span>
+                  </div>
+                  <div className={cn("p-2 rounded border flex flex-col items-center justify-center", isLight ? "bg-white border-neutral-200" : "bg-neutral-900 border-neutral-800")}>
+                    <span className="text-[10px] text-neutral-500 uppercase">Реакция</span>
+                    <span className={cn("font-mono font-bold", isLight ? "text-neutral-800" : "text-neutral-200")}>{me.stats.reaction}</span>
+                  </div>
+                  <div className={cn("p-2 rounded border flex flex-col items-center justify-center", isLight ? "bg-white border-neutral-200" : "bg-neutral-900 border-neutral-800")}>
+                    <span className="text-[10px] text-neutral-500 uppercase">Подъём</span>
+                    <span className={cn("font-mono font-bold", isLight ? "text-neutral-800" : "text-neutral-200")}>{me.stats.strength}</span>
+                  </div>
+                  <div className={cn("p-2 rounded border flex flex-col items-center justify-center", isLight ? "bg-white border-neutral-200" : "bg-neutral-900 border-neutral-800")}>
+                    <span className="text-[10px] text-neutral-500 uppercase">Урон</span>
+                    <span className={cn("font-mono font-bold", isLight ? "text-neutral-800" : "text-neutral-200")}>{me.stats.power}</span>
+                  </div>
+                  <div className={cn("p-2 rounded border flex flex-col items-center justify-center", isLight ? "bg-white border-neutral-200" : "bg-neutral-900 border-neutral-800")}>
+                    <span className="text-[10px] text-neutral-500 uppercase">Прочность</span>
+                    <span className={cn("font-mono font-bold", isLight ? "text-neutral-800" : "text-neutral-200")}>{me.stats.durability}</span>
+                  </div>
+                  <div className={cn("p-2 rounded border flex flex-col items-center justify-center", isLight ? "bg-white border-neutral-200" : "bg-neutral-900 border-neutral-800")}>
+                    <span className="text-[10px] text-neutral-500 uppercase">Выносл.</span>
+                    <span className={cn("font-mono font-bold", isLight ? "text-neutral-800" : "text-neutral-200")}>{me.stats.stamina}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div>
               <h3 className="text-sm font-medium text-neutral-400 mb-2 uppercase tracking-wider">Состояния</h3>
               {(!me?.statuses || me.statuses.length === 0) ? (

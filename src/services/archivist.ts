@@ -24,6 +24,7 @@ export async function processWikiCandidates(candidates: WikiCandidate[], roomId:
 Твоя задача - решить, достойно ли это записи в Великую Энциклопедию (Википедию).
 Если это банальщина (обычный волк, простой камень, крестьянин), верни JSON: {"rejected": true, "reason": "Слишком банально"}.
 Если это достойно, напиши подробную, научную и атмосферную статью.
+Не создавай отдельные статьи для каждого подвида (например, разных гоблинов или вариаций одного меча). Если это подвид, обновляй основную статью, добавляя фразу "преобладает разнообразием" и описывая новые виды там.
 
 Имя: ${candidate.name}
 Сырые факты: ${candidate.rawFacts}
@@ -33,7 +34,8 @@ ${existingEntry ? `У нас уже есть запись об этом:\n${exis
 Верни СТРОГО JSON объект:
 {
   "rejected": false,
-  "category": "Флора" | "Фауна" | "Артефакты" | "Магические Аномалии" | "Фракции" | "Исторические Личности" | "Локации",
+  "category": "Флора" | "Фауна" | "Артефакты" | "Магические Аномалии" | "Фракции" | "Исторические Личности" | "Локации" | "Заклинания",
+  "nature": "positive" | "negative" | "neutral",
   "tags": ["тег1", "тег2"],
   "level": 1 | 2 | 3, // 1 - внешний вид, 2 - повадки/свойства, 3 - полная анатомия/секреты
   "content": "Текст статьи в формате Markdown. Пиши от лица Магистра Элиаса, используй научный, но фэнтезийный стиль.",
@@ -63,6 +65,7 @@ ${existingEntry ? `У нас уже есть запись об этом:\n${exis
       if (existingEntry) {
         await updateDoc(doc(db, 'bestiary', existingEntry.id), {
           category: parsed.category,
+          nature: parsed.nature || 'neutral',
           tags: parsed.tags,
           level: parsed.level,
           content: parsed.content,
@@ -74,6 +77,7 @@ ${existingEntry ? `У нас уже есть запись об этом:\n${exis
         await setDoc(newRef, {
           title: candidate.name,
           category: parsed.category,
+          nature: parsed.nature || 'neutral',
           tags: parsed.tags,
           level: parsed.level,
           content: parsed.content,

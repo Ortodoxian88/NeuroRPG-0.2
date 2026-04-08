@@ -6,6 +6,57 @@ import admin from 'firebase-admin';
 import fs from 'fs';
 import rateLimit from 'express-rate-limit';
 import 'dotenv/config';
+import { z } from 'zod';
+
+const gameResponseSchema = z.object({
+  reasoning: z.string(),
+  story: z.string(),
+  worldUpdates: z.string(),
+  factionUpdates: z.record(z.string(), z.string()),
+  hiddenTimersUpdates: z.record(z.string(), z.number()),
+  stateUpdates: z.array(z.object({
+    uid: z.string(),
+    hp: z.number(),
+    mana: z.number(),
+    stress: z.number(),
+    alignment: z.string(),
+    inventory: z.array(z.string()),
+    skills: z.array(z.string()),
+    injuries: z.array(z.string()),
+    statuses: z.array(z.string()),
+    mutations: z.array(z.string()),
+    reputation: z.record(z.string(), z.number()),
+    stats: z.object({
+      speed: z.number(),
+      reaction: z.number(),
+      strength: z.number(),
+      power: z.number(),
+      durability: z.number(),
+      stamina: z.number()
+    })
+  })),
+  wikiCandidates: z.array(z.object({
+    name: z.string(),
+    rawFacts: z.string(),
+    reason: z.string()
+  }))
+});
+
+async function generateWithValidation(prompt: string, baseConfig: any, attempt = 1): Promise<any> {
+    const maxAttempts = 3;
+    try {
+        const rawResponse = await generateWithFallback(prompt, baseConfig);
+        return gameResponseSchema.parse(JSON.parse(rawResponse));
+    } catch (error) {
+        if (attempt >= maxAttempts) {
+            console.error("All attempts failed. Returning raw response or throwing error.");
+            throw error;
+        }
+        console.warn(`Attempt ${attempt} failed: ${error}. Retrying...`);
+        const retryPrompt = `${prompt}\n\nПРЕДЫДУЩИЙ ОТВЕТ БЫЛ НЕВАЛИДНЫМ: ${error}. ПОЖАЛУЙСТА, ИСПРАВЬ ОШИБКИ И ВЕРНИ ВАЛИДНЫЙ JSON.`;
+        return generateWithValidation(retryPrompt, baseConfig, attempt + 1);
+    }
+}
 
 // Initialize Firebase Admin for token verification
 const firebaseConfigPath = path.join(process.cwd(), 'firebase-applet-config.json');
@@ -209,7 +260,7 @@ async function startServer() {
 
 Верни JSON объект с массивами "inventory" и "skills", а также строку "alignment" (например, "Законопослушный-Добрый", "Хаотично-Злой", "Истинно-Нейтральный"). Названия предметов и навыков должны быть на РУССКОМ языке. Будь краток.`;
 
-      const text = await generateWithFallback(prompt, {
+      const text = await generateWithValidation(prompt, {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -266,8 +317,8 @@ async function startServer() {
 
 Напиши обновленное краткое содержание (не более 3-4 абзацев), сохраняя ключевые события и текущую цель героев. Пиши художественно, но емко.`;
 
-      const aiText = await generateWithFallback(prompt, {
-        // Use low thinking for summarization to save time if supported
+      const aiText = await generateWithValidation(prompt, {
+        model: "gemini-3.1-flash-lite-preview"
       });
 
       res.json({ text: aiText });
@@ -338,14 +389,16 @@ ${actionsText}
 11. AI Director и Случайные встречи: Подстраивай сложность. Если скучно - генерируй органичную случайную встречу или загадку.
 12. Моральные дилеммы: Изредка ставь игроков перед сложным выбором без правильного ответа.
 13. Тональность: Анализируй тон чата, но оставайся беспристрастным. Если ситуация критическая, а игроки шутят - мир реагирует серьезно и жестоко.
+14. РАВНОМЕРНОЕ ВНИМАНИЕ: Вовлекай ВСЕХ игроков в сцену. Не фокусируй атаки или события только на одном персонаже, распределяй угрозы и возможности между всей группой.
 15. Википедия (Архивариус): Выявляй УНИКАЛЬНЫЕ, ВАЖНЫЕ или МАГИЧЕСКИЕ сущности/локации/артефакты/фракции. Игнорируй обыденные вещи (собаки, крестьяне, обычные мечи). Если встретилось что-то достойное, добавь это в "wikiCandidates" с кратким набором сырых фактов. Архивариус (другой ИИ) позже напишет об этом подробную статью.
+16. ФИЗИЧЕСКИЕ ПАРАМЕТРЫ: У каждого игрока есть статы (1-20): speed (скорость), reaction (реакция), strength (подъем), power (урон), durability (прочность), stamina (выносливость). Инициализируй их при создании и обновляй при травмах, баффах или тренировках.
 
 [ИНСТРУКЦИИ ПО ФОРМАТУ]
 Описывай происходящее ДЕТАЛЬНО, ГЛУБОКО и ХУДОЖЕСТВЕННО. Используй богатый литературный язык.
 Заканчивай ход интригой или новым вызовом.
 `;
 
-      const aiText = await generateWithFallback(prompt, {
+      const aiText = await generateWithValidation(prompt, {
         model: modelName,
         thinkingConfig: { thinkingLevel: ThinkingLevel.HIGH },
         responseMimeType: "application/json",
@@ -372,7 +425,18 @@ ${actionsText}
                   injuries: { type: Type.ARRAY, items: { type: Type.STRING } },
                   statuses: { type: Type.ARRAY, items: { type: Type.STRING } },
                   mutations: { type: Type.ARRAY, items: { type: Type.STRING } },
-                  reputation: { type: Type.OBJECT, description: "Репутация у фракций/NPC (Ключ: Имя, Значение: Число от -100 до 100)" }
+                  reputation: { type: Type.OBJECT, description: "Репутация у фракций/NPC (Ключ: Имя, Значение: Число от -100 до 100)" },
+                  stats: {
+                    type: Type.OBJECT,
+                    properties: {
+                      speed: { type: Type.NUMBER },
+                      reaction: { type: Type.NUMBER },
+                      strength: { type: Type.NUMBER },
+                      power: { type: Type.NUMBER },
+                      durability: { type: Type.NUMBER },
+                      stamina: { type: Type.NUMBER }
+                    }
+                  }
                 },
                 required: ["uid"]
               }
@@ -398,7 +462,7 @@ ${actionsText}
           },
           required: ["reasoning", "story", "stateUpdates", "wikiCandidates", "quests"]
         }
-      }, ["gemini-3-flash-preview", "gemini-3.1-flash-lite-preview"]);
+      });
 
       let jsonText = aiText;
       

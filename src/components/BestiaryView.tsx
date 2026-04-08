@@ -84,6 +84,16 @@ export default function BestiaryView({ onBack, appSettings }: { onBack: () => vo
               <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs rounded-md border border-blue-200 dark:border-blue-800/50 flex items-center gap-1">
                 <Info size={10} /> Уровень знаний: {selectedEntry.level || 1}
               </span>
+              {selectedEntry.nature && (
+                <span className={cn(
+                  "px-2 py-1 text-xs rounded-md border flex items-center gap-1",
+                  selectedEntry.nature === 'positive' ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 border-green-200 dark:border-green-800/50" :
+                  selectedEntry.nature === 'negative' ? "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 border-red-200 dark:border-red-800/50" :
+                  "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-neutral-700"
+                )}>
+                  {selectedEntry.nature === 'positive' ? 'Благотворное' : selectedEntry.nature === 'negative' ? 'Вредоносное' : 'Нейтральное'}
+                </span>
+              )}
             </div>
 
             <div className={cn(
@@ -211,7 +221,19 @@ export default function BestiaryView({ onBack, appSettings }: { onBack: () => vo
                 </div>
                 
                 {entry.category && (
-                  <p className="text-xs uppercase tracking-wider opacity-60 font-semibold">{entry.category}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs uppercase tracking-wider opacity-60 font-semibold">{entry.category}</p>
+                    {entry.nature && (
+                      <span className={cn(
+                        "text-[9px] px-1.5 py-0.5 rounded border",
+                        entry.nature === 'positive' ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 border-green-200 dark:border-green-800/50" :
+                        entry.nature === 'negative' ? "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 border-red-200 dark:border-red-800/50" :
+                        "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-neutral-700"
+                      )}>
+                        {entry.nature === 'positive' ? 'Благотворное' : entry.nature === 'negative' ? 'Вредоносное' : 'Нейтральное'}
+                      </span>
+                    )}
+                  </div>
                 )}
 
                 {entry.tags && entry.tags.length > 0 && (
