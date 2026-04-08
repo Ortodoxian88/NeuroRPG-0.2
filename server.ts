@@ -50,50 +50,71 @@ const safetySettings = [
   { category: HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY, threshold: HarmBlockThreshold.BLOCK_NONE },
 ];
 
-function getAIClient(): GoogleGenAI {
-  const key = process.env.GEMINI_API_KEY || process.env.API_KEY;
-  if (!key) {
-    throw new Error("GEMINI_API_KEY environment variable is missing. Please check your secrets in AI Studio.");
-  }
-  return new GoogleGenAI({ apiKey: key });
+function getAIKeys(): string[] {
+  const primaryKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+  const additionalKeys = process.env.GEMINI_API_KEYS ? process.env.GEMINI_API_KEYS.split(',').map(k => k.trim()).filter(k => k) : [];
+  
+  const allKeys = primaryKey ? [primaryKey, ...additionalKeys] : additionalKeys;
+  return [...new Set(allKeys)]; // Unique keys
 }
 
 async function generateWithFallback(prompt: string, baseConfig: any, models: string[] = ["gemini-3-flash-preview", "gemini-3.1-flash-lite-preview"]) {
   let lastError;
-  const ai = getAIClient();
+  const keys = getAIKeys();
+  
+  if (keys.length === 0) {
+    throw new Error("GEMINI_API_KEY environment variable is missing. Please check your secrets in AI Studio.");
+  }
 
   const modelList = baseConfig.model ? [baseConfig.model, ...models.filter(m => m !== baseConfig.model)] : models;
 
-  for (const modelName of modelList) {
-    try {
-      console.log(`[AI] Attempting generation with model: ${modelName}`);
-      const config = { ...baseConfig };
-      delete config.model;
-      
-      if (modelName === "gemini-3.1-flash-lite-preview" && config.thinkingConfig) {
-        delete config.thinkingConfig;
-      }
-
-      const response = await ai.models.generateContent({
-        model: modelName,
-        contents: prompt,
-        config: {
-          ...config,
-          safetySettings: safetySettings
+  for (const key of keys) {
+    const ai = new GoogleGenAI({ apiKey: key });
+    
+    for (const modelName of modelList) {
+      try {
+        console.log(`[AI] Attempting generation with model: ${modelName} (using key: ${key.substring(0, 8)}...)`);
+        const config = { ...baseConfig };
+        delete config.model;
+        
+        if (modelName === "gemini-3.1-flash-lite-preview" && config.thinkingConfig) {
+          delete config.thinkingConfig;
         }
-      });
-      
-      if (!response.text) {
-        console.warn(`[AI] Model ${modelName} returned no text. Full response:`, JSON.stringify(response));
-        throw new Error(`AI returned no text. Finish reason: ${response.candidates?.[0]?.finishReason}`);
+
+        const response = await ai.getGenerativeModel({
+          model: modelName,
+          safetySettings: safetySettings,
+          generationConfig: config
+        }).generateContent(prompt);
+        
+        const text = response.response.text();
+        
+        if (!text) {
+          console.warn(`[AI] Model ${modelName} returned no text.`);
+          throw new Error(`AI returned no text.`);
+        }
+        
+        console.log(`[AI] Successfully generated with ${modelName}`);
+        return text;
+      } catch (error: any) {
+        console.warn(`[AI] Model ${modelName} failed with key ${key.substring(0, 8)}...: ${error.message || error}`);
+        lastError = error;
+        
+        // If it's a 429 (Too Many Requests), we should try the next key
+        if (error.message?.includes("429") || error.message?.toLowerCase().includes("too many requests")) {
+          console.log(`[AI] Rate limit hit for key ${key.substring(0, 8)}..., trying next key if available.`);
+          break; // Break the model loop to try the next key
+        }
+        
+        // If it's an invalid key, we should try the next key
+        if (error.message?.includes("API key not valid")) {
+          console.log(`[AI] Invalid key ${key.substring(0, 8)}..., trying next key if available.`);
+          break;
+        }
+
+        // For other errors, we might want to try the next model with the same key
+        continue;
       }
-      
-      console.log(`[AI] Successfully generated with ${modelName}`);
-      return response.text;
-    } catch (error: any) {
-      console.warn(`[AI] Model ${modelName} failed: ${error.message || error}`);
-      lastError = error;
-      if (error.message?.includes("API key not valid")) throw error;
     }
   }
 
