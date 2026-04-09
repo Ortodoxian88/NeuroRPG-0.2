@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollText, CheckCircle2, Circle } from 'lucide-react';
-import { AppSettings } from '@/src/types';
-import { cn } from '@/src/lib/utils';
+import { AppSettings } from '../types';
+import { cn } from '../lib/utils';
 
 interface QuestTabProps {
   quests: string[];

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sparkles, Download, UserMinus, Globe, Shield, Clock, Plus, Minus } from 'lucide-react';
-import { Player, Room, AppSettings } from '@/src/types';
-import { cn } from '@/src/lib/utils';
+import { Player, Room, AppSettings } from '../../types';
+import { cn } from '../../lib/utils';
 
 interface StateTabProps {
   me: Player | undefined;

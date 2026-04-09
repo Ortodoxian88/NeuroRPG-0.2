@@ -1,7 +1,7 @@
 import React from 'react';
 import { Backpack } from 'lucide-react';
-import { Player, AppSettings } from '@/src/types';
-import { cn } from '@/src/lib/utils';
+import { Player, AppSettings } from '../../types';
+import { cn } from '../../lib/utils';
 
 interface InventoryTabProps {
   me: Player | undefined;

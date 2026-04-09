@@ -1,7 +1,7 @@
 import React from 'react';
 import { Send, Mic, Loader2 } from 'lucide-react';
-import { cn } from '@/src/lib/utils';
-import { Player, AppSettings } from '@/src/types';
+import { cn } from '../../lib/utils';
+import { Player, AppSettings } from '../../types';
 
 interface ActionInputProps {
   me: Player | undefined;

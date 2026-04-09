@@ -1,20 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { supabase } from '@/src/supabase';
-import { Room, Player, Message, AppSettings, ChatSettings } from '@/src/types';
+import { supabase } from '../supabase';
+import { Room, Player, Message, AppSettings, ChatSettings } from '../types';
 import { Users, Play, Loader2, Backpack, MessageSquare, Sparkles, X, CheckCircle2 } from 'lucide-react';
-import { cn } from '@/src/lib/utils';
-import { typingIndicators } from '@/src/lib/indicators';
-import { processWikiCandidates } from '@/src/services/archivist';
-import { api } from '@/src/services/api';
-import { SSEClient } from '@/src/services/sse';
+import { cn } from '../lib/utils';
+import { typingIndicators } from '../lib/indicators';
+import { processWikiCandidates } from '../services/archivist';
+import { api } from '../services/api';
+import { SSEClient } from '../services/sse';
 
 // Subcomponents
-import ChatArea from '@/src/components/room/ChatArea';
-import ActionInput from '@/src/components/room/ActionInput';
-import InventoryTab from '@/src/components/room/InventoryTab';
-import StateTab from '@/src/components/room/StateTab';
-import QuestTab from '@/src/components/QuestTab';
-import DiceOverlay from '@/src/components/room/DiceOverlay';
+import ChatArea from './room/ChatArea';
+import ActionInput from './room/ActionInput';
+import InventoryTab from './room/InventoryTab';
+import StateTab from './room/StateTab';
+import QuestTab from './QuestTab';
+import DiceOverlay from './room/DiceOverlay';
 
 interface RoomViewProps {
   roomId: string;

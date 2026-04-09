@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { Message, ChatSettings, AppSettings, Player } from '@/src/types';
+import { Message, ChatSettings, AppSettings, Player } from '../../types';
 import { Loader2 } from 'lucide-react';
 import Markdown from 'react-markdown';
-import { cn } from '@/src/lib/utils';
+import { cn } from '../../lib/utils';
 
 interface ChatAreaProps {
   messages: Message[];

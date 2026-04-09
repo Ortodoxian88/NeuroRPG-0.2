@@ -6,14 +6,14 @@
 import { useEffect, useState } from 'react';
 import { supabase } from './supabase';
 import { signInWithGoogle, logout } from './supabase';
-import Lobby from '@/src/components/Lobby';
-import RoomView from '@/src/components/RoomView';
-import BestiaryView from '@/src/components/BestiaryView';
-import SettingsView from '@/src/components/SettingsView';
-import ErrorBoundary from '@/src/components/ErrorBoundary';
+import Lobby from './components/Lobby';
+import RoomView from './components/RoomView';
+import BestiaryView from './components/BestiaryView';
+import SettingsView from './components/SettingsView';
+import ErrorBoundary from './components/ErrorBoundary';
 import { LogOut, BookOpen, Home, DoorOpen, MoreVertical, Settings, Bug, X, Send, CheckCircle2, Loader2, Sparkles, Zap, Ghost, Sword, MessageSquarePlus } from 'lucide-react';
 import { UserProfile, AppSettings, ChatSettings } from './types';
-import { cn } from '@/src/lib/utils';
+import { cn } from './lib/utils';
 
 type ViewState = 'main' | 'bestiary' | 'settings';
 

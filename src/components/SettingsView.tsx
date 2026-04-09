@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { AppSettings, ChatSettings } from '@/src/types';
+import { AppSettings, ChatSettings } from '../types';
 import { X, Globe, MessageSquare, Monitor, Type, Palette, Zap, ShieldAlert, Info, Trash2, Bug } from 'lucide-react';
-import { cn } from '@/src/lib/utils';
+import { cn } from '../lib/utils';
 
 interface SettingsViewProps {
   appSettings: AppSettings;
