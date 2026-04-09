@@ -10,14 +10,23 @@ if (!dbUrl) {
   console.error('[DB] ❌ DATABASE_URL is not defined in environment variables!');
 }
 
-// Создаем пул только если есть URL, иначе pg-connection-string выбросит TypeError
-export const pool = dbUrl 
-  ? new Pool({
+// Создаем пул только если есть URL и он валидный
+function createPool() {
+  if (!dbUrl) return null;
+  
+  try {
+    return new Pool({
       connectionString: dbUrl,
       max: 10, // Ограничение Supabase Free Tier
       ssl: isProduction ? { rejectUnauthorized: false } : false,
-    })
-  : null;
+    });
+  } catch (err) {
+    console.error('[DB] ❌ Failed to initialize database pool (possibly invalid DATABASE_URL):', err);
+    return null;
+  }
+}
+
+export const pool = createPool();
 
 // Обработка ошибок простаивающих клиентов пула
 if (pool) {
