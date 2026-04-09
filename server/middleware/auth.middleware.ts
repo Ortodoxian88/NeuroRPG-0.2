@@ -24,15 +24,14 @@ if (!admin.apps.length) {
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
       });
-      console.log('[Auth] Firebase Admin initialized');
+      console.log('[Auth] Firebase Admin initialized with service account');
     } else {
-      console.warn('[Auth] No service account found. Using default credentials.');
-      admin.initializeApp();
+      console.warn('[Auth] No service account found in env (FIREBASE_SERVICE_ACCOUNT_JSON or FIREBASE_SERVICE_ACCOUNT_JSON_B64). Firebase features might fail.');
+      // Не вызываем initializeApp() без аргументов, так как это упадет без дефолтных кредов Google Cloud
     }
   } catch (error) {
-    console.error('[Auth] Critical error initializing Firebase Admin:', error);
-    // В проде лучше упасть сразу, чем работать без авторизации
-    if (process.env.NODE_ENV === 'production') process.exit(1);
+    console.error('[Auth] Error initializing Firebase Admin:', error);
+    // Не выходим, чтобы сервер мог запуститься и мы увидели логи
   }
 }
 

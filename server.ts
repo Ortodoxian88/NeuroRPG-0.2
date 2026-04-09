@@ -73,11 +73,8 @@ async function startServer() {
     const isDbConnected = await checkDatabaseConnection();
     
     if (!isDbConnected) {
-      console.error('[Server] CRITICAL: Could not connect to database.');
-      if (process.env.NODE_ENV === 'production') {
-        console.error('[Server] Exiting due to DB connection failure in production.');
-        process.exit(1);
-      }
+      console.error('[Server] ❌ CRITICAL: Could not connect to database. API endpoints will fail.');
+      console.error('[Server] Check DATABASE_URL environment variable.');
     }
 
     await setupStatic();
