@@ -10,22 +10,30 @@ if (!dbUrl) {
   console.error('[DB] ❌ DATABASE_URL is not defined in environment variables!');
 }
 
-export const pool = new Pool({
-  connectionString: dbUrl || '',
-  max: 10, // Ограничение Supabase Free Tier
-  ssl: isProduction ? { rejectUnauthorized: false } : false,
-});
+// Создаем пул только если есть URL, иначе pg-connection-string выбросит TypeError
+export const pool = dbUrl 
+  ? new Pool({
+      connectionString: dbUrl,
+      max: 10, // Ограничение Supabase Free Tier
+      ssl: isProduction ? { rejectUnauthorized: false } : false,
+    })
+  : null;
 
 // Обработка ошибок простаивающих клиентов пула
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-  // Не выходим сразу, даем серверу шанс восстановиться или хотя бы не падать в цикле
-});
+if (pool) {
+  pool.on('error', (err) => {
+    console.error('Unexpected error on idle client', err);
+  });
+}
 
 /**
  * Проверка подключения к БД при старте сервера
  */
 export async function checkDatabaseConnection(): Promise<boolean> {
+  if (!pool) {
+    console.error('[DB] ❌ Cannot check connection: pool not initialized (missing DATABASE_URL)');
+    return false;
+  }
   try {
     const client = await pool.connect();
     client.release();
@@ -44,6 +52,9 @@ export async function query<T extends QueryResultRow = any>(
   text: string,
   params?: any[]
 ): Promise<QueryResult<T>> {
+  if (!pool) {
+    throw new Error('Database pool not initialized. Check DATABASE_URL.');
+  }
   const start = Date.now();
   const res = await pool.query<T>(text, params);
   const duration = Date.now() - start;
@@ -61,6 +72,9 @@ export async function query<T extends QueryResultRow = any>(
 export async function withTransaction<T>(
   callback: (client: PoolClient) => Promise<T>
 ): Promise<T> {
+  if (!pool) {
+    throw new Error('Database pool not initialized. Check DATABASE_URL.');
+  }
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
