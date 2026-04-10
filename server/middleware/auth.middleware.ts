@@ -1,11 +1,21 @@
 import { Request, Response, NextFunction } from 'express';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { usersRepository } from '../database/repositories/users.repository';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || '';
+let supabaseInstance: SupabaseClient | null = null;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function getSupabase() {
+  if (!supabaseInstance) {
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+    const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '';
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase configuration is missing (SUPABASE_URL/VITE_SUPABASE_URL)');
+    }
+    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
+  }
+  return supabaseInstance;
+}
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
@@ -22,6 +32,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
       return res.status(401).json({ error: 'Missing token' });
     }
 
+    const supabase = getSupabase();
     const { data: { user: supabaseUser }, error } = await supabase.auth.getUser(token);
     
     if (error || !supabaseUser) {
@@ -39,8 +50,8 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
 
     req.user = user;
     next();
-  } catch (error) {
-    console.error('[Auth] Middleware Error:', error);
-    res.status(401).json({ error: 'Unauthorized' });
+  } catch (error: any) {
+    console.error('[Auth] Middleware Error:', error.message);
+    res.status(401).json({ error: 'Unauthorized', details: error.message });
   }
 }
