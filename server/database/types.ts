@@ -19,10 +19,12 @@ export interface SessionRow {
 export interface RoomRow {
   id: string;
   host_user_id: string;
+  scenario: string;
   join_code: string;
   status: string;
   turn_number: number;
   turn_status: string;
+  turn_resolution: string;
   turn_started_at: Date | null;
   story_summary: string;
   world_settings: any;
