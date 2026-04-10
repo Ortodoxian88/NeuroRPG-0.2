@@ -46,7 +46,7 @@ const playerActionSchema = z.object({
   isHidden: z.boolean().optional(),
 });
 
-const playerUpdateSchema = z.record(z.any()); // Simplified for now as it can be any update
+const playerUpdateSchema = z.record(z.string(), z.any()); // Simplified for now as it can be any update
 
 const geminiJoinSchema = z.object({
   characterName: z.string().min(1),
@@ -68,8 +68,8 @@ const geminiGenerateSchema = z.object({
   actionsText: z.string(),
   currentQuests: z.array(z.any()).optional(),
   worldState: z.string().optional(),
-  factions: z.record(z.any()).optional(),
-  hiddenTimers: z.record(z.any()).optional(),
+  factions: z.record(z.string(), z.any()).optional(),
+  hiddenTimers: z.record(z.string(), z.any()).optional(),
   gmTone: z.string(),
   difficulty: z.string(),
   goreLevel: z.string(),
@@ -89,7 +89,7 @@ const createMessageSchema = z.object({
   content: z.string().min(1),
   type: z.string().optional(),
   turn_number: z.number().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 const gameResponseSchema = z.object({
