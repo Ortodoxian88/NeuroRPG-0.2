@@ -17,8 +17,10 @@ function createPool() {
   try {
     return new Pool({
       connectionString: dbUrl,
-      max: 10, // Ограничение Supabase Free Tier
-      ssl: isProduction ? { rejectUnauthorized: false } : false,
+      max: 5,
+      ssl: { rejectUnauthorized: false },
+      idleTimeoutMillis: 30000, // Закрывать неиспользуемые соединения через 30 сек
+      connectionTimeoutMillis: 10000, // Тайм-аут на установку соединения 10 сек
     });
   } catch (err) {
     console.error('[DB] ❌ Failed to initialize database pool (possibly invalid DATABASE_URL):', err);
