@@ -58,6 +58,7 @@ export default function RoomView({ roomId, user, onLeave, onMinimize, onOpenBest
   const [typedMessageIds, setTypedMessageIds] = useState<Set<string>>(new Set());
   
   const generatingTurnRef = useRef<number | null>(null);
+  const isRequestingRef = useRef(false);
   
   const isHost = Boolean(user && room?.hostId === user.id);
   const me = players.find(p => p.uid === user?.id);
@@ -312,10 +313,11 @@ export default function RoomView({ roomId, user, onLeave, onMinimize, onOpenBest
   }, [roomId, onLeave]);
 
   useEffect(() => {
-    if (!isHost || !room || room.status !== 'playing' || room.isGenerating) return;
+    if (!isHost || !room || room.status !== 'playing' || room.isGenerating || isRequestingRef.current) return;
+    
     if (players.length > 0 && players.every(p => p.isReady)) {
       if (generatingTurnRef.current === room.turn) return;
-      generatingTurnRef.current = room.turn;
+      console.log("[RoomView] All players ready, triggering AI generation for turn:", room.turn);
       generateAIResponse();
     }
   }, [players, isHost, room]);
@@ -488,11 +490,14 @@ export default function RoomView({ roomId, user, onLeave, onMinimize, onOpenBest
   };
 
   const generateAIResponse = async () => {
-    if (!room || room.isGenerating) return;
+    if (!room || room.isGenerating || isRequestingRef.current) return;
+    if (generatingTurnRef.current === room.turn) return;
     
+    generatingTurnRef.current = room.turn;
+    isRequestingRef.current = true;
     setGenerationError(null);
-    // Let's assume the backend will set isGenerating to true when we call generateTurn
-    // But we can also set it locally for immediate UI feedback
+    
+    // Set local state for immediate feedback
     setRoom(prev => prev ? { ...prev, isGenerating: true } : null);
 
     try {
@@ -541,6 +546,10 @@ export default function RoomView({ roomId, user, onLeave, onMinimize, onOpenBest
       console.error("Error generating AI response:", error);
       setGenerationError(error.message || "Произошла ошибка при генерации ответа ИИ.");
       setRoom(prev => prev ? { ...prev, isGenerating: false } : null);
+      // Reset ref on error so it can be retried manually if needed, 
+      // but the useEffect guard will still prevent immediate auto-retry if turn hasn't changed
+    } finally {
+      isRequestingRef.current = false;
     }
   };
 
