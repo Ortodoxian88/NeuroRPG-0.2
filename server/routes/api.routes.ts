@@ -225,7 +225,15 @@ apiRouter.post('/rooms/:roomId/start', authMiddleware, async (req, res) => {
 apiRouter.post('/rooms/join', authMiddleware, async (req, res) => {
   try {
     const { joinCode, characterName, characterProfile, stats, inventory, skills, alignment } = req.body;
-    const room = await roomsRepository.findByJoinCode(joinCode);
+    
+    // Try finding by join_code first, then by ID
+    let room = await roomsRepository.findByJoinCode(joinCode);
+    if (!room) {
+      // If it's a valid UUID, try finding by ID
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(joinCode)) {
+        room = await roomsRepository.findById(joinCode);
+      }
+    }
     
     if (!room) return res.status(404).json({ error: 'Room not found or invalid code' });
     

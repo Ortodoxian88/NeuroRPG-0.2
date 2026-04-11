@@ -3,7 +3,13 @@ import { RoomRow } from '../types';
 
 export const roomsRepository = {
   async createRoom(hostUserId: string, worldSettings: any): Promise<RoomRow> {
-    const joinCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    // Generate exactly 6 uppercase alphanumeric characters
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let joinCode = '';
+    for (let i = 0; i < 6; i++) {
+      joinCode += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
     const sql = `
       INSERT INTO rooms (host_user_id, join_code, status, turn_number, turn_status, story_summary, world_settings, active_quests, created_at, updated_at)
       VALUES ($1, $2, 'lobby', 0, 'waiting', '', $3, '[]', NOW(), NOW())

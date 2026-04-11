@@ -123,7 +123,7 @@ export default function Lobby({ onOpenBestiary, onOpenSettings, onOpenReport, ap
                   >
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-mono text-xs text-orange-500 bg-orange-500/10 px-2 py-1 rounded font-bold">
-                        {room.id}
+                        {room.join_code}
                       </span>
                       <div className={cn(
                         "flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest",

@@ -520,7 +520,7 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
           )}
           <div>
             <h2 className="text-xl font-semibold text-white font-display">Создание персонажа</h2>
-            <p className="text-sm text-neutral-400 mt-1">Код комнаты: <span className="font-mono text-white">{roomId}</span></p>
+            <p className="text-sm text-neutral-400 mt-1">Код комнаты: <span className="font-mono text-white">{room.joinCode}</span></p>
           </div>
           
           <form onSubmit={handleJoin} className="space-y-5">
@@ -591,7 +591,7 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
         appSettings?.theme === 'light' ? "bg-white border-neutral-200" : "bg-neutral-900/50 border-neutral-800"
       )}>
         <span className={cn("font-medium", appSettings?.theme === 'light' ? "text-neutral-500" : "text-neutral-400")}>
-          Код комнаты: <span className={cn("font-mono font-bold select-all", appSettings?.theme === 'light' ? "text-neutral-900" : "text-white")}>{roomId}</span>
+          Код комнаты: <span className={cn("font-mono font-bold select-all", appSettings?.theme === 'light' ? "text-neutral-900" : "text-white")}>{room.joinCode}</span>
         </span>
         {appSettings?.localMusicUrl && (
           <audio src={appSettings.localMusicUrl} autoPlay loop controls className="h-6 w-48 opacity-50 hover:opacity-100 transition-opacity" />
@@ -638,7 +638,7 @@ export default function RoomView({ roomId, onLeave, onMinimize, onOpenBestiary, 
                       Код комнаты: <span className={cn(
                         "font-mono px-3 py-1.5 rounded-lg mx-1",
                         appSettings?.theme === 'light' ? "text-neutral-900 bg-neutral-200" : "text-white bg-neutral-800"
-                      )}>{roomId}</span>
+                      )}>{room.joinCode}</span>
                     </p>
                   </div>
                   
