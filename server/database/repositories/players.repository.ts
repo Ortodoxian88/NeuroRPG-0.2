@@ -16,8 +16,15 @@ export const playersRepository = {
     const res = await query<RoomPlayerRow>(sql, [
       data.room_id, data.user_id, data.character_name, data.character_profile, data.hp, data.hp_max, data.mana, data.mana_max,
       data.stress, data.stress_max, data.stat_strength, data.stat_dexterity, data.stat_constitution, data.stat_intelligence,
-      data.stat_wisdom, data.stat_charisma, data.inventory, data.skills, data.statuses, data.injuries, data.alignment, data.mutations,
-      data.reputation, data.current_action, data.is_ready, data.is_online
+      data.stat_wisdom, data.stat_charisma, 
+      JSON.stringify(data.inventory || []), 
+      JSON.stringify(data.skills || []), 
+      JSON.stringify(data.statuses || []), 
+      JSON.stringify(data.injuries || []), 
+      data.alignment, 
+      JSON.stringify(data.mutations || []),
+      JSON.stringify(data.reputation || {}), 
+      data.current_action, data.is_ready, data.is_online
     ]);
     return res.rows[0];
   },
@@ -53,7 +60,13 @@ export const playersRepository = {
       WHERE id = $5 
       RETURNING *;
     `;
-    const res = await query<RoomPlayerRow>(sql, [updates.hp, updates.mana, updates.stress, updates.inventory, id]);
+    const res = await query<RoomPlayerRow>(sql, [
+      updates.hp, 
+      updates.mana, 
+      updates.stress, 
+      updates.inventory ? JSON.stringify(updates.inventory) : null, 
+      id
+    ]);
     return res.rows[0];
   }
 };

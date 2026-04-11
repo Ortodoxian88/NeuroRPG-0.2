@@ -538,7 +538,7 @@ apiRouter.post("/gemini/generate", authMiddleware, async (req, res) => {
 
     await query(
       'UPDATE rooms SET turn_number = $1, turn_status = $2, active_quests = $3, world_settings = $4 WHERE id = $5',
-      [newTurn, 'waiting', result.quests || room.active_quests, worldSettings, roomId]
+      [newTurn, 'waiting', JSON.stringify(result.quests || room.active_quests || []), JSON.stringify(worldSettings), roomId]
     );
 
     const updatedRoom = await roomsRepository.findById(roomId);
@@ -624,7 +624,7 @@ ${existingEntry ? `У нас уже есть запись об этом:\n${exis
         if (existingEntry) {
           await query(
             'UPDATE bestiary SET category = $1, nature = $2, tags = $3, knowledge_level = $4, content = $5, author_notes = $6 WHERE id = $7',
-            [parsed.category, parsed.nature || 'neutral', parsed.tags, parsed.level, parsed.content, parsed.authorNotes || null, existingEntry.id]
+            [parsed.category, parsed.nature || 'neutral', JSON.stringify(parsed.tags || []), parsed.level, parsed.content, parsed.authorNotes || null, existingEntry.id]
           );
         } else {
           await bestiaryRepository.create({

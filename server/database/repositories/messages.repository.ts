@@ -8,7 +8,7 @@ export const messagesRepository = {
       VALUES ($1, $2, $3, $4, $5, $6, NOW())
       RETURNING *;
     `;
-    const res = await query<MessageRow>(sql, [data.room_id, data.user_id, data.type, data.content, data.metadata, data.turn_number]);
+    const res = await query<MessageRow>(sql, [data.room_id, data.user_id, data.type, data.content, JSON.stringify(data.metadata || {}), data.turn_number]);
     return res.rows[0];
   },
 

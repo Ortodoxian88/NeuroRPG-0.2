@@ -15,7 +15,7 @@ export const roomsRepository = {
       VALUES ($1, $2, 'lobby', 0, 'waiting', '', $3, '[]', NOW(), NOW())
       RETURNING *;
     `;
-    const res = await query<RoomRow>(sql, [hostUserId, joinCode, worldSettings]);
+    const res = await query<RoomRow>(sql, [hostUserId, joinCode, JSON.stringify(worldSettings || {})]);
     return res.rows[0];
   },
 

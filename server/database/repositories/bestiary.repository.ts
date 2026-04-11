@@ -27,7 +27,7 @@ export const bestiaryRepository = {
       RETURNING *;
     `;
     const res = await query<BestiaryRow>(sql, [
-      data.slug, data.title, data.category, data.content, data.tags, data.nature, 
+      data.slug, data.title, data.category, data.content, JSON.stringify(data.tags || []), data.nature, 
       data.knowledge_level, data.author_notes, data.source_room_id, data.discovered_by_user_id
     ]);
     return res.rows[0];
