@@ -1,91 +1,13 @@
 <!doctype html>
-<html lang="ru" class="h-full">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-
-    <!--
-      viewport-fit=cover — критично для iPhone с "чёлкой" (notch).
-      Без этого env(safe-area-inset-bottom) в CSS не работает.
-      В Lobby.tsx используется [padding-bottom:max(1rem,env(safe-area-inset-bottom))]
-      — без этого мета-тега отступ всегда будет 1rem, игнорируя notch.
-    -->
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    />
-
-    <title>NeuroRPG — Цифровой Гейм-мастер</title>
-
-    <meta
-      name="description"
-      content="NeuroRPG — текстовая RPG с AI Гейм-мастером. Создай персонажа и отправься в приключение."
-    />
-
-    <!--
-      theme-color — цвет UI браузера на мобильных устройствах.
-      Черный соответствует дизайну приложения.
-      media атрибут позволяет задать разные цвета для тёмной/светлой темы.
-    -->
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-
-    <!-- PWA: полноэкранный режим на iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="NeuroRPG" />
-
-    <!-- Favicon — предотвращаем 404 в консоли -->
-    <!-- TODO: Заменить на реальную иконку /public/favicon.ico -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-
-    <!--
-      Google Fonts: preconnect — устанавливаем TCP соединение заранее.
-      Экономит 100-300ms на первой загрузке шрифтов.
-
-      ПОРЯДОК ВАЖЕН:
-      1. preconnect к fonts.googleapis.com (CSS запрос)
-      2. preconnect к fonts.gstatic.com (файлы шрифтов, crossorigin обязателен)
-      3. stylesheet с display=swap
-    -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!--
-      Шрифты через <link> — НЕ блокирует рендер (в отличие от CSS @import).
-      display=swap: показывает системный шрифт пока загружается Inter/Space Grotesk.
-      Пользователь видит текст сразу, без FOIT (Flash of Invisible Text).
-    -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap"
-    />
-
-    <!--
-      УДАЛЕНО: <script src="https://js.puter.com/v2/"></script>
-      Причины удаления:
-      1. Нигде не используется в кодовой базе (grep показал 0 совпадений)
-      2. Загружается синхронно → блокирует парсинг HTML
-      3. Внешний скрипт без integrity hash → потенциальный XSS вектор
-      4. Добавляет ~200KB к начальной загрузке без пользы
-      5. Проект использует Supabase + Gemini — Puter не нужен
-
-      Если Puter понадобится в будущем — подключить динамически:
-      const script = document.createElement('script');
-      script.src = 'https://js.puter.com/v2/';
-      script.defer = true;
-      document.head.appendChild(script);
-    -->
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NeuroRPG</title>
+    <script src="https://js.puter.com/v2/"></script>
   </head>
-
-  <body class="h-full bg-black">
-    <div id="root" class="h-full"></div>
-
-    <!--
-      type="module" — автоматически defer (не блокирует рендер).
-      Vite заменит это на оптимизированный бандл при build.
-    -->
+  <body>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,19 +1,6 @@
-/* src/index.css */
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   ВАЖНО: Шрифты подключены через <link> в index.html — НЕ через @import здесь.
-   @import url() блокирует рендер страницы. <link rel="stylesheet"> — нет.
-   ───────────────────────────────────────────────────────────────────────────── */
-
-/* Tailwind v4 — основной импорт */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap');
 @import "tailwindcss";
-
-/* Typography плагин (Tailwind v4 синтаксис) */
 @plugin "@tailwindcss/typography";
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   КАСТОМНЫЕ ШРИФТЫ — регистрируем в Tailwind theme
-   ───────────────────────────────────────────────────────────────────────────── */
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -21,326 +8,101 @@
   --font-serif: "Merriweather", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   БАЗОВЫЕ СТИЛИ
-   ───────────────────────────────────────────────────────────────────────────── */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-body {
-  /* Чёрный фон за пределами контейнера приложения */
-  background-color: #000000;
-
-  /* Сглаживание шрифтов — важно на macOS/iOS */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   CSS ПЕРЕМЕННЫЕ — ТЕМЫ
-   Централизованные токены для цветов.
-   При смене темы браузер делает одну перерисовку вместо пересчёта всех классов.
-   ───────────────────────────────────────────────────────────────────────────── */
-
 :root {
-  /* Тёмная тема (по умолчанию) */
   --scrollbar-thumb: #333333;
   --scrollbar-track: transparent;
-
-  /* Цвета markdown контента */
-  --md-text: #e5e7eb;          /* neutral-200 */
-  --md-strong: #f3f4f6;        /* neutral-100 */
-  --md-heading: #f3f4f6;       /* neutral-100 */
-  --md-blockquote: #9ca3af;    /* neutral-400 */
-  --md-blockquote-border: #f97316; /* orange-500 */
-  --md-code-bg: #1a1a1a;
-  --md-code-text: #e5e7eb;
 }
 
-/* Светлая тема */
 .light-theme {
   --scrollbar-thumb: #d1d5db; /* neutral-300 */
   --scrollbar-track: #f9fafb; /* neutral-50 */
-
-  --md-text: #1f2937;          /* neutral-800 */
-  --md-strong: #111827;        /* neutral-900 */
-  --md-heading: #111827;       /* neutral-900 */
-  --md-blockquote: #4b5563;    /* neutral-600 */
-  --md-blockquote-border: #f97316; /* orange-500 — одинаково для всех тем */
-  --md-code-bg: #f3f4f6;
-  --md-code-text: #1f2937;
 }
 
-/* OLED / Полностью чёрная тема */
-.black-theme {
-  --scrollbar-thumb: #1a1a1a;
-  --scrollbar-track: transparent;
-
-  /* Markdown чуть темнее чем dark — для OLED экрана */
-  --md-text: #d1d5db;          /* neutral-300 */
-  --md-strong: #e5e7eb;        /* neutral-200 */
-  --md-heading: #e5e7eb;       /* neutral-200 */
-  --md-blockquote: #6b7280;    /* neutral-500 */
-  --md-blockquote-border: #f97316;
-  --md-code-bg: #0a0a0a;
-  --md-code-text: #d1d5db;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   КАСТОМНЫЙ СКРОЛЛБАР
-   ───────────────────────────────────────────────────────────────────────────── */
-
-/* WebKit (Chrome, Safari, Edge) */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--scrollbar-track);
+  background: var(--scrollbar-track); 
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
+  background: var(--scrollbar-thumb); 
   border-radius: 10px;
-
-  /* Плавный переход при hover */
-  transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #f97316; /* orange-500 — акцентный цвет бренда */
+  background: #f97316; /* orange-500 */
 }
 
-/* Firefox
-   Примечание: Firefox не поддерживает :hover для скроллбара.
-   Оранжевый цвет при наведении работает только в WebKit-браузерах.
-   scrollbar-width: thin даёт узкий скроллбар без кастомного track.
-*/
+/* For Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   MARKDOWN СТИЛИ
-   Используем CSS переменные — автоматически адаптируются к текущей теме.
-   ───────────────────────────────────────────────────────────────────────────── */
-
-.markdown-body {
-  color: var(--md-text);
-  line-height: 1.7;
+body {
+  background-color: #000000; /* Black background outside the app container */
 }
 
+/* Markdown Styles */
 .markdown-body strong {
   font-weight: 700;
-  color: var(--md-strong);
+  color: #f3f4f6;
 }
-
 .markdown-body em {
   font-style: italic;
-  /* em наследует цвет родителя — не переопределяем */
 }
-
 .markdown-body ul {
   list-style-type: disc;
   padding-left: 1.5rem;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
-
 .markdown-body ol {
   list-style-type: decimal;
   padding-left: 1.5rem;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
-
-.markdown-body li {
-  margin-bottom: 0.25rem;
-}
-
 .markdown-body p {
   margin-bottom: 0.5rem;
 }
-
 .markdown-body p:last-child {
   margin-bottom: 0;
 }
-
-.markdown-body h1,
-.markdown-body h2,
-.markdown-body h3,
-.markdown-body h4,
-.markdown-body h5,
-.markdown-body h6 {
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
   font-weight: 700;
-  color: var(--md-heading);
-  line-height: 1.3;
-}
-
-.markdown-body h1 {
-  font-size: 1.5rem;
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.markdown-body h2 {
-  font-size: 1.25rem;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
-}
-
-.markdown-body h3 {
-  font-size: 1.1rem;
   margin-top: 1rem;
   margin-bottom: 0.5rem;
+  color: #f3f4f6;
 }
-
-/* h4-h6 — более скромные */
-.markdown-body h4,
-.markdown-body h5,
-.markdown-body h6 {
-  font-size: 1rem;
-  margin-top: 0.75rem;
-  margin-bottom: 0.25rem;
-}
-
-/* Первый заголовок не нуждается в верхнем отступе */
-.markdown-body :first-child {
-  margin-top: 0;
-}
-
 .markdown-body blockquote {
-  border-left: 3px solid var(--md-blockquote-border);
+  border-left: 3px solid #f97316;
   padding-left: 1rem;
-  margin: 0.75rem 0;
   font-style: italic;
-  color: var(--md-blockquote);
+  color: #9ca3af;
 }
 
-/* Инлайн код */
-.markdown-body code:not(pre code) {
-  background: var(--md-code-bg);
-  color: var(--md-code-text);
-  padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
-  font-size: 0.875em;
-  font-family: var(--font-mono, ui-monospace, monospace);
-}
-
-/* Блок кода */
-.markdown-body pre {
-  background: var(--md-code-bg);
-  color: var(--md-code-text);
-  padding: 1rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
-  margin: 0.75rem 0;
-  font-size: 0.875rem;
-  line-height: 1.6;
-}
-
-.markdown-body pre code {
-  background: none;
-  padding: 0;
-  font-size: inherit;
-  color: inherit;
-}
-
-/* Горизонтальная линия */
-.markdown-body hr {
-  border: none;
-  border-top: 1px solid;
-  border-color: var(--scrollbar-thumb);
-  margin: 1rem 0;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   РЕЖИМЫ ПРОИЗВОДИТЕЛЬНОСТИ И АНИМАЦИЙ
-   ───────────────────────────────────────────────────────────────────────────── */
-
-/* Полное отключение анимаций */
+/* No Animations Mode */
 .no-animations *,
 .no-animations *::before,
 .no-animations *::after {
   animation-duration: 0s !important;
-  animation-delay: 0s !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0s !important;
-  transition-delay: 0s !important;
   scroll-behavior: auto !important;
-
-  /*
-    will-change: auto — браузер не будет создавать compositor слои
-    для элементов помеченных will-change: transform/opacity.
-    Освобождает GPU память при отключении анимаций.
-  */
-  will-change: auto !important;
 }
 
-/* Режим производительности — отключаем тяжёлые эффекты */
+/* Performance Mode */
 .performance-mode * {
-  /* backdrop-filter (размытие фона) — самый тяжёлый CSS эффект */
   backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-
-  /* Тени нагружают CPU при каждом repaint */
   box-shadow: none !important;
   text-shadow: none !important;
-
-  /* Освобождаем GPU слои */
-  will-change: auto !important;
-
-  /*
-    filter убирает дополнительные composite слои.
-    Осторожно: может убрать drop-shadow от svg иконок.
-  */
-  filter: none !important;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   УТИЛИТЫ
-   ───────────────────────────────────────────────────────────────────────────── */
-
-/*
-  .btn-press — класс для кнопок с эффектом нажатия.
-  Если нигде не используется — можно удалить.
-  Оставлен как документированная утилита для будущих кнопок.
-*/
 .btn-press {
   @apply transition-all active:scale-95;
-}
-
-/*
-  Утилита для скрытия элементов от screen reader'ов
-  но сохранения их в DOM (для SEO и JS).
-*/
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/*
-  Принудительный скрытый скроллбар — для областей где скроллбар мешает дизайну.
-  Использование: <div class="scrollbar-hide overflow-y-auto">
-*/
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
