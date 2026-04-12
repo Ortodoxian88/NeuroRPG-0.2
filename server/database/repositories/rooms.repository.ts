@@ -1,8 +1,9 @@
 import { query } from '../client';
 import { RoomRow } from '../types';
+import { PoolClient } from 'pg';
 
 export const roomsRepository = {
-  async createRoom(hostUserId: string, worldSettings: any): Promise<RoomRow> {
+  async createRoom(hostUserId: string, worldSettings: any, client?: PoolClient): Promise<RoomRow> {
     // Generate exactly 6 uppercase alphanumeric characters
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let joinCode = '';
@@ -15,39 +16,44 @@ export const roomsRepository = {
       VALUES ($1, $2, 'lobby', 0, 'waiting', '', $3, '[]', NOW(), NOW())
       RETURNING *;
     `;
-    const res = await query<any>(sql, [hostUserId, joinCode, JSON.stringify(worldSettings || {})]);
+    const executor = client || { query };
+    const res = await executor.query<any>(sql, [hostUserId, joinCode, JSON.stringify(worldSettings || {})]);
     
     // Fetch with external_host_id
-    return this.findById(res.rows[0].id);
+    return this.findById(res.rows[0].id, client);
   },
 
-  async findById(id: string): Promise<any | null> {
+  async findById(id: string, client?: PoolClient): Promise<any | null> {
     const sql = `
       SELECT r.*, u.google_id as external_host_id
       FROM rooms r
       JOIN users u ON r.host_user_id = u.id
       WHERE r.id = $1::uuid
     `;
-    const res = await query<any>(sql, [id]);
+    const executor = client || { query };
+    const res = await executor.query<any>(sql, [id]);
     return res.rows[0] || null;
   },
 
-  async findByJoinCode(joinCode: string): Promise<any | null> {
+  async findByJoinCode(joinCode: string, client?: PoolClient): Promise<any | null> {
     const sql = `
       SELECT r.*, u.google_id as external_host_id
       FROM rooms r
       JOIN users u ON r.host_user_id = u.id
       WHERE r.join_code = $1
     `;
-    const res = await query<any>(sql, [joinCode]);
+    const executor = client || { query };
+    const res = await executor.query<any>(sql, [joinCode]);
     return res.rows[0] || null;
   },
 
-  async updateStatus(id: string, status: string): Promise<void> {
-    await query('UPDATE rooms SET status = $1, updated_at = NOW() WHERE id = $2', [status, id]);
+  async updateStatus(id: string, status: string, client?: PoolClient): Promise<void> {
+    const executor = client || { query };
+    await executor.query('UPDATE rooms SET status = $1, updated_at = NOW() WHERE id = $2', [status, id]);
   },
 
-  async updateTurn(id: string, turnNumber: number, turnStatus: string, storySummary: string): Promise<void> {
-    await query('UPDATE rooms SET turn_number = $1, turn_status = $2, story_summary = $3, updated_at = NOW() WHERE id = $4', [turnNumber, turnStatus, storySummary, id]);
+  async updateTurn(id: string, turnNumber: number, turnStatus: string, storySummary: string, client?: PoolClient): Promise<void> {
+    const executor = client || { query };
+    await executor.query('UPDATE rooms SET turn_number = $1, turn_status = $2, story_summary = $3, updated_at = NOW() WHERE id = $4', [turnNumber, turnStatus, storySummary, id]);
   }
 };

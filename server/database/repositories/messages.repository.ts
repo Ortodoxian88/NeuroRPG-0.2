@@ -1,14 +1,16 @@
-import { query } from '../client';
+import { query, pool } from '../client';
 import { MessageRow } from '../types';
+import { PoolClient } from 'pg';
 
 export const messagesRepository = {
-  async create(data: { room_id: string, user_id: string | null, type: string, content: string, metadata: any, turn_number: number }): Promise<MessageRow> {
+  async create(data: { room_id: string, user_id: string | null, type: string, content: string, metadata: any, turn_number: number }, client?: PoolClient): Promise<MessageRow> {
     const sql = `
       INSERT INTO messages (room_id, user_id, type, content, metadata, turn_number, created_at)
       VALUES ($1, $2, $3, $4, $5, $6, NOW())
       RETURNING *;
     `;
-    const res = await query<MessageRow>(sql, [data.room_id, data.user_id, data.type, data.content, JSON.stringify(data.metadata || {}), data.turn_number]);
+    const executor = client || { query };
+    const res = await executor.query<MessageRow>(sql, [data.room_id, data.user_id, data.type, data.content, JSON.stringify(data.metadata || {}), data.turn_number]);
     return res.rows[0];
   },
 

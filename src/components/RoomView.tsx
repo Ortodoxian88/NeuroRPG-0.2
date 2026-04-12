@@ -316,11 +316,18 @@ export default function RoomView({ roomId, user, onLeave, onMinimize, onOpenBest
     if (!isHost || !room || room.status !== 'playing' || room.isGenerating || isRequestingRef.current) return;
     
     if (players.length > 0 && players.every(p => p.isReady)) {
+      // Safety check: don't trigger if we already have an AI message for this turn
+      const hasAiResponseForCurrentTurn = messages.some(m => m.turn === room.turn && m.role === 'ai');
+      if (hasAiResponseForCurrentTurn) {
+        console.log("[RoomView] AI response already exists for turn:", room.turn);
+        return;
+      }
+
       if (generatingTurnRef.current === room.turn) return;
       console.log("[RoomView] All players ready, triggering AI generation for turn:", room.turn);
       generateAIResponse();
     }
-  }, [players, isHost, room]);
+  }, [players, isHost, room, messages]);
 
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();

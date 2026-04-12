@@ -49,7 +49,7 @@ const ProgressBar = ({
   );
 };
 
-const StatCard = ({ label, value, icon: Icon }: { label: string, value: number, icon: any }) => (
+const StatCard = ({ label, value, icon: Icon }: { label: string, value: any, icon: any }) => (
   <div className="bg-neutral-900/50 border border-neutral-800 p-4 rounded-2xl flex flex-col items-center justify-center space-y-2 hover:border-orange-500/30 transition-all group">
     <div className="w-10 h-10 rounded-xl bg-neutral-800 flex items-center justify-center border border-neutral-700 group-hover:border-orange-500/30 transition-colors">
       <Icon size={20} className="text-neutral-400 group-hover:text-orange-500 transition-colors" />

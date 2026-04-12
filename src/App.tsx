@@ -229,6 +229,10 @@ export default function App() {
     setActiveView('main');
   }, [user, currentRoomId]);
 
+  const handleOpenBestiary = useCallback(() => {
+    setActiveView('bestiary');
+  }, []);
+
   if (loading || profileLoading) {
     return (
       <div className="min-h-[100dvh] bg-black flex items-center justify-center text-neutral-400">
@@ -535,7 +539,7 @@ export default function App() {
               user={user}
               onLeave={handleLeaveRoom} 
               onMinimize={handleMinimizeRoom}
-              onOpenBestiary={() => setActiveView('bestiary')} 
+              onOpenBestiary={handleOpenBestiary} 
               appSettings={appSettings}
               chatSettings={chatSettings}
             />

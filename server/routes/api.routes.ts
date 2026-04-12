@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { query } from '../database/client';
+import { query, withTransaction } from '../database/client';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { sseService } from '../services/sse.service';
 import { messagesRepository } from '../database/repositories/messages.repository';
@@ -497,64 +497,66 @@ apiRouter.post("/gemini/generate", authMiddleware, async (req, res) => {
       responseMimeType: "application/json"
     });
 
-    // Save AI message
-    const aiMessage = await messagesRepository.create({
-      room_id: roomId,
-      user_id: null,
-      type: 'ai_response',
-      content: result.story,
-      turn_number: room.turn_number,
-      metadata: { reasoning: result.reasoning }
-    });
-    sseService.broadcast(roomId, 'message.new', aiMessage);
+    await withTransaction(async (client) => {
+      // Save AI message
+      const aiMessage = await messagesRepository.create({
+        room_id: roomId,
+        user_id: null,
+        type: 'ai_response',
+        content: result.story,
+        turn_number: room.turn_number,
+        metadata: { reasoning: result.reasoning }
+      }, client);
+      sseService.broadcast(roomId, 'message.new', aiMessage);
 
-    // Update players
-    if (result.stateUpdates && Array.isArray(result.stateUpdates)) {
-      for (const update of result.stateUpdates) {
-        const player = await playersRepository.findByRoomAndUser(roomId, update.uid);
-        if (player) {
-          const updatedPlayer = await playersRepository.updateState(player.id, {
-            hp: update.hp,
-            mana: update.mana,
-            stress: update.stress,
-            alignment: update.alignment,
-            inventory: update.inventory,
-            skills: update.skills,
-            injuries: update.injuries,
-            statuses: update.statuses,
-            mutations: update.mutations,
-            reputation: update.reputation
-          });
-          if (updatedPlayer) {
-            sseService.broadcast(roomId, 'player.updated', updatedPlayer);
+      // Update players
+      if (result.stateUpdates && Array.isArray(result.stateUpdates)) {
+        for (const update of result.stateUpdates) {
+          const player = await playersRepository.findByRoomAndUser(roomId, update.uid, client);
+          if (player) {
+            const updatedPlayer = await playersRepository.updateState(player.id, {
+              hp: update.hp,
+              mana: update.mana,
+              stress: update.stress,
+              alignment: update.alignment,
+              inventory: update.inventory,
+              skills: update.skills,
+              injuries: update.injuries,
+              statuses: update.statuses,
+              mutations: update.mutations,
+              reputation: update.reputation
+            }, client);
+            if (updatedPlayer) {
+              sseService.broadcast(roomId, 'player.updated', updatedPlayer);
+            }
           }
         }
       }
-    }
 
-    // Reset player readiness
-    const players = await playersRepository.findByRoom(roomId);
-    for (const p of players) {
-      const updatedPlayer = await playersRepository.updateAction(p.id, '', false);
-      if (updatedPlayer) {
-        sseService.broadcast(roomId, 'player.updated', updatedPlayer);
+      // Reset player readiness
+      const players = await playersRepository.findByRoom(roomId, client);
+      for (const p of players) {
+        const updatedPlayer = await playersRepository.updateAction(p.id, '', false, client);
+        if (updatedPlayer) {
+          sseService.broadcast(roomId, 'player.updated', updatedPlayer);
+        }
       }
-    }
 
-    // Update room
-    const newTurn = room.turn_number + 1;
-    const worldSettings = room.world_settings || {};
-    worldSettings.worldState = result.worldUpdates || worldSettings.worldState;
-    worldSettings.factions = result.factionUpdates || worldSettings.factions;
-    worldSettings.hiddenTimers = result.hiddenTimersUpdates || worldSettings.hiddenTimers;
+      // Update room
+      const newTurn = room.turn_number + 1;
+      const worldSettings = room.world_settings || {};
+      worldSettings.worldState = result.worldUpdates || worldSettings.worldState;
+      worldSettings.factions = result.factionUpdates || worldSettings.factions;
+      worldSettings.hiddenTimers = result.hiddenTimersUpdates || worldSettings.hiddenTimers;
 
-    await query(
-      'UPDATE rooms SET turn_number = $1, turn_status = $2, active_quests = $3, world_settings = $4 WHERE id = $5',
-      [newTurn, 'waiting', JSON.stringify(result.quests || room.active_quests || []), JSON.stringify(worldSettings), roomId]
-    );
+      await client.query(
+        'UPDATE rooms SET turn_number = $1, turn_status = $2, active_quests = $3, world_settings = $4 WHERE id = $5',
+        [newTurn, 'waiting', JSON.stringify(result.quests || room.active_quests || []), JSON.stringify(worldSettings), roomId]
+      );
 
-    const updatedRoom = await roomsRepository.findById(roomId);
-    sseService.broadcast(roomId, 'room.updated', updatedRoom);
+      const updatedRoom = await roomsRepository.findById(roomId, client);
+      sseService.broadcast(roomId, 'room.updated', updatedRoom);
+    });
 
     res.json(result);
   } catch (error) {
